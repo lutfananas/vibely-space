@@ -183,11 +183,11 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <img
               src="/logo-circle.png"
-              alt="Dindaaa Logo"
+              alt="VIBELY SPACE Logo"
               className="w-10 h-10 rounded-full border-2 border-pink-300 shadow-sm"
             />
             <span className="text-lg sm:text-xl font-bold text-primary">
-              Dindaaa ✨
+              VIBELY SPACE ✨
             </span>
           </div>
           <nav className="flex items-center gap-2 sm:gap-4">
@@ -256,7 +256,7 @@ export default function Home() {
                   <div className="absolute -inset-4 bg-gradient-to-r from-pink-200 to-rose-200 rounded-3xl blur-2xl opacity-40" />
                   <img
                     src="/hero-image.png"
-                    alt="Sponsor Giveaway by Dindaaa"
+                    alt="Sponsor Giveaway by VIBELY SPACE"
                     className="relative w-64 sm:w-72 lg:w-80 rounded-3xl shadow-2xl shadow-pink-200/50 border-4 border-white"
                   />
                   {/* Decorative badge */}
@@ -309,7 +309,7 @@ export default function Home() {
                     <div className="absolute -inset-6 bg-gradient-to-br from-pink-100 to-rose-100 rounded-full blur-3xl opacity-50" />
                     <img
                       src="/logo.png"
-                      alt="Dindaaa Logo"
+                      alt="VIBELY SPACE Logo"
                       className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-full shadow-xl border-4 border-white object-cover"
                     />
                   </div>
@@ -371,7 +371,7 @@ export default function Home() {
                   💸 Price List
                 </span>
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground">
-                  Sponsor Giveaway by Dindaaa ✨
+                  Sponsor Giveaway by VIBELY SPACE ✨
                 </h2>
               </div>
 
@@ -467,7 +467,7 @@ export default function Home() {
               <div className="grid sm:grid-cols-2 gap-6">
                 {/* Instagram Contact */}
                 <a
-                  href="https://instagram.com/dindaa.015"
+                  href="https://instagram.com/vibely.space"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group"
@@ -480,7 +480,7 @@ export default function Home() {
                         </svg>
                       </div>
                       <h3 className="text-xl font-bold text-foreground mb-2">Instagram</h3>
-                      <p className="text-primary font-semibold text-lg">@dindaa.015</p>
+                      <p className="text-primary font-semibold text-lg">@vibely.space</p>
                       <p className="text-sm text-muted-foreground mt-2">DM atau mention di Instagram</p>
                     </CardContent>
                   </Card>
@@ -528,7 +528,7 @@ export default function Home() {
                     </Button>
                   </a>
                   <a
-                    href="https://instagram.com/dindaa.015"
+                    href="https://instagram.com/vibely.space"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -550,17 +550,17 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <img
                 src="/logo-circle.png"
-                alt="Dindaaa Logo"
+                alt="VIBELY SPACE Logo"
                 className="w-8 h-8 rounded-full border border-pink-300"
               />
-              <span className="font-bold text-primary">Dindaaa ✨</span>
+              <span className="font-bold text-primary">VIBELY SPACE ✨</span>
             </div>
             <p className="text-sm text-muted-foreground text-center">
-              Sponsor Giveaway by Dindaaa — Murah, Cepat & Terpercaya 💕
+              Sponsor Giveaway by VIBELY SPACE — Murah, Cepat & Terpercaya 💕
             </p>
             <div className="flex items-center gap-4">
               <a
-                href="https://instagram.com/dindaa.015"
+                href="https://instagram.com/vibely.space"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"

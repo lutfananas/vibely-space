@@ -9,15 +9,15 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Sponsor Giveaway by Dindaaa ✨",
+  title: "Sponsor Giveaway by VIBELY SPACE ✨",
   description: "Jadi Sponsor Giveaway! Dapatkan followers real indo+aktif dengan harga terjangkau. Murah, cepat & lebih terpercaya!",
-  keywords: ["sponsor giveaway", "followers instagram", "ig followers", "giveaway indo", "dindaaa"],
-  authors: [{ name: "Dindaaa" }],
+  keywords: ["sponsor giveaway", "followers instagram", "ig followers", "giveaway indo", "vibely space"],
+  authors: [{ name: "VIBELY SPACE" }],
   icons: {
     icon: "/logo.png",
   },
   openGraph: {
-    title: "Sponsor Giveaway by Dindaaa ✨",
+    title: "Sponsor Giveaway by VIBELY SPACE ✨",
     description: "Dapatkan followers real indo+aktif dengan harga terjangkau!",
     type: "website",
   },
