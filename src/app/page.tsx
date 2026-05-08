@@ -187,19 +187,97 @@ function PriceCard({
   )
 }
 
-// Floating Music Player Component
+// Floating Music Player Component — uses YouTube IFrame API for mobile support
 function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showIntro, setShowIntro] = useState(true)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const playerRef = useRef<YT.Player | null>(null)
+  const playerContainerRef = useRef<HTMLDivElement>(null)
+
+  const createPlayer = () => {
+    if (playerRef.current || !playerContainerRef.current) return
+
+    const container = document.createElement('div')
+    container.id = 'yt-player-div'
+    playerContainerRef.current.appendChild(container)
+
+    playerRef.current = new window.YT.Player('yt-player-div', {
+      videoId: 'cjcDXTuubNA',
+      playerVars: {
+        autoplay: 0,
+        start: 41,
+        loop: 1,
+        playlist: 'cjcDXTuubNA',
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        modestbranding: 1,
+        rel: 0,
+        playsinline: 1,
+      },
+      events: {
+        onReady: () => {
+          // Player ready
+        },
+        onStateChange: (event: YT.OnStateChangeEvent) => {
+          if (event.data === window.YT.PlayerState.PLAYING) {
+            setIsPlaying(true)
+          } else if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
+            setIsPlaying(false)
+          }
+        },
+      },
+    })
+  }
+
+  // Load YouTube IFrame API once
+  useEffect(() => {
+    // Add YT API script
+    if (!document.getElementById('yt-iframe-api')) {
+      const tag = document.createElement('script')
+      tag.id = 'yt-iframe-api'
+      tag.src = 'https://www.youtube.com/iframe_api'
+      document.head.appendChild(tag)
+    }
+
+    // Define callback that fires when API is ready
+    const origReady = window.onYouTubeIframeAPIReady
+    window.onYouTubeIframeAPIReady = () => {
+      origReady?.()
+      createPlayer()
+    }
+
+    // If API already loaded (rare), create player immediately
+    if (window.YT?.Player) {
+      createPlayer()
+    }
+
+    return () => {
+      // Cleanup
+      if (playerRef.current) {
+        try { playerRef.current.destroy() } catch {}
+        playerRef.current = null
+      }
+    }
+  }, [])
 
   const startMusic = () => {
-    setIsPlaying(true)
     setShowIntro(false)
+    // Small delay to ensure DOM is ready after state change
+    setTimeout(() => {
+      if (playerRef.current) {
+        playerRef.current.playVideo()
+      }
+    }, 200)
   }
 
   const toggleMusic = () => {
-    setIsPlaying(prev => !prev)
+    if (!playerRef.current) return
+    if (isPlaying) {
+      playerRef.current.pauseVideo()
+    } else {
+      playerRef.current.playVideo()
+    }
   }
 
   return (
@@ -225,24 +303,18 @@ function MusicPlayer() {
         </div>
       )}
 
-      {/* Hidden YouTube iframe for audio */}
-      <div className="fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
-        {isPlaying && (
-          <iframe
-            ref={iframeRef}
-            src="https://www.youtube.com/embed/V1MZp3ESWf8?autoplay=1&start=6&loop=1&playlist=V1MZp3ESWf8&controls=0"
-            title="Background Music"
-            allow="autoplay; encrypted-media"
-            style={{ width: 0, height: 0, border: 0 }}
-          />
-        )}
-      </div>
+      {/* Hidden YouTube player container */}
+      <div
+        ref={playerContainerRef}
+        className="fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none"
+        aria-hidden="true"
+      />
 
       {/* Floating Music Toggle Button */}
       {!showIntro && (
         <button
           onClick={toggleMusic}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 transition-all duration-300 border-2 border-white/50 group"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/50 group"
           aria-label={isPlaying ? 'Pause music' : 'Play music'}
         >
           {isPlaying ? (
