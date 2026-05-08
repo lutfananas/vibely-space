@@ -186,9 +186,14 @@ export default function Home() {
               alt="VIBELY SPACE Logo"
               className="w-10 h-10 rounded-full border-2 border-pink-300 shadow-sm"
             />
-            <span className="text-lg sm:text-xl font-bold text-primary">
-              VIBELY SPACE ✨
-            </span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-lg sm:text-xl font-bold text-primary">
+                VIBELY SPACE ✨
+              </span>
+              <span className="hidden sm:inline italic text-sm font-medium text-muted-foreground tracking-wide">
+                where cute meets clever ✦
+              </span>
+            </div>
           </div>
           <nav className="flex items-center gap-2 sm:gap-4">
             <a href="#about" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">
