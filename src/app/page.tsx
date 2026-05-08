@@ -187,6 +187,120 @@ function PriceCard({
   )
 }
 
+// Cute Loading Screen Component
+function LoadingScreen({ onFinish }: { onFinish: () => void }) {
+  const [progress, setProgress] = useState(0)
+  const [fadeOut, setFadeOut] = useState(false)
+
+  useEffect(() => {
+    // Animate progress over 4 seconds
+    const duration = 4000
+    const interval = 40
+    const step = 100 / (duration / interval)
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        const next = prev + step + Math.random() * 0.5
+        if (next >= 100) {
+          clearInterval(timer)
+          setProgress(100)
+          // Start fade out
+          setTimeout(() => setFadeOut(true), 300)
+          // Call onFinish after fade out
+          setTimeout(() => onFinish(), 800)
+          return 100
+        }
+        return next
+      })
+    }, interval)
+
+    return () => clearInterval(timer)
+  }, [onFinish])
+
+  return (
+    <div
+      className={`fixed inset-0 z-[200] flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-rose-50 transition-opacity duration-500 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+    >
+      {/* Background decorations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {['💖', '💕', '💗', '🌷', '✨', '💞', '🌸', '💝', '🦋', '🎀'].map((emoji, i) => (
+          <span
+            key={i}
+            className="absolute text-2xl opacity-15 animate-float"
+            style={{
+              left: `${5 + (i * 10) % 90}%`,
+              top: `${5 + (i * 15) % 85}%`,
+              animationDelay: `${i * 0.3}s`,
+              animationDuration: `${3 + (i % 3)}s`,
+            }}
+          >
+            {emoji}
+          </span>
+        ))}
+      </div>
+
+      <div className="relative flex flex-col items-center text-center">
+        {/* Bouncing Logo */}
+        <div className="relative mb-6 animate-bounce-gentle">
+          {/* Glow behind logo */}
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-xl opacity-40 scale-125" />
+          {/* Logo */}
+          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-2xl shadow-pink-300/50">
+            <div className="w-full h-full rounded-full p-[2px] bg-white">
+              <div className="w-full h-full rounded-full p-[1px] bg-gradient-to-br from-pink-50 to-rose-50 overflow-hidden">
+                <img
+                  src="/logo-circle.png"
+                  alt="VIBELY SPACE"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
+            </div>
+          </div>
+          {/* Orbiting sparkles */}
+          <span className="absolute -top-2 -right-2 text-lg animate-sparkle">✦</span>
+          <span className="absolute -bottom-1 -left-2 text-sm animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</span>
+          <span className="absolute top-1/2 -right-4 text-xs animate-sparkle" style={{ animationDelay: '1s' }}>✨</span>
+        </div>
+
+        {/* Brand Name */}
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-primary mb-1">
+          VIBELY SPACE ✨
+        </h1>
+        <p className="italic text-sm text-muted-foreground mb-8">where cute meets clever ✦</p>
+
+        {/* Cute Loading Bar */}
+        <div className="w-48 sm:w-56 relative">
+          {/* Progress track */}
+          <div className="h-3 bg-pink-100 rounded-full overflow-hidden border border-pink-200 shadow-inner">
+            {/* Progress fill with shimmer */}
+            <div
+              className="h-full bg-gradient-to-r from-primary via-pink-400 to-rose-400 rounded-full transition-all duration-200 relative"
+              style={{ width: `${progress}%` }}
+            >
+              {/* Shimmer overlay */}
+              <div className="absolute inset-0 shimmer-bg rounded-full" />
+            </div>
+          </div>
+          {/* Progress percentage */}
+          <p className="text-xs text-primary font-bold mt-2">
+            {Math.round(progress)}%
+          </p>
+        </div>
+
+        {/* Cute loading text with animated dots */}
+        <div className="mt-4 flex items-center justify-center gap-0.5">
+          <p className="text-sm text-muted-foreground">Memuat keceriaan</p>
+          <span className="flex gap-0.5 ml-0.5">
+            <span className="text-primary animate-bounce" style={{ animationDelay: '0s', animationDuration: '1s' }}>.</span>
+            <span className="text-primary animate-bounce" style={{ animationDelay: '0.2s', animationDuration: '1s' }}>.</span>
+            <span className="text-primary animate-bounce" style={{ animationDelay: '0.4s', animationDuration: '1s' }}>.</span>
+          </span>
+          <span className="text-sm ml-1">🎀</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Floating Music Player Component — welcome popup then autoplay
 function MusicPlayer() {
   const [showWelcome, setShowWelcome] = useState(true)
@@ -360,6 +474,7 @@ function MusicPlayer() {
 // Main page
 export default function Home() {
   const [mounted, setMounted] = useState(false)
+  const [loadingDone, setLoadingDone] = useState(false)
   const { ref: sectionRef1, isInView: isInView1 } = useInView()
   const { ref: sectionRef2, isInView: isInView2 } = useInView()
   const { ref: sectionRef3, isInView: isInView3 } = useInView()
@@ -372,6 +487,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* ===== LOADING SCREEN ===== */}
+      {!loadingDone && <LoadingScreen onFinish={() => setLoadingDone(true)} />}
+
       {/* ===== MUSIC PLAYER ===== */}
       <MusicPlayer />
 

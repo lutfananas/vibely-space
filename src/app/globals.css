@@ -120,6 +120,17 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes bounceGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
@@ -138,6 +149,14 @@
 
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+.animate-dots {
+  animation: dots 1.5s steps(1) infinite;
 }
 
 .shimmer-bg {
