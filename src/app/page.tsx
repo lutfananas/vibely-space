@@ -203,12 +203,12 @@ function MusicPlayer() {
     playerContainerRef.current.appendChild(container)
 
     playerRef.current = new window.YT.Player('yt-player-div', {
-      videoId: 'cjcDXTuubNA',
+      videoId: 'DmuSAPGV7DE',
       playerVars: {
         autoplay: 1,       // Autoplay muted works on all browsers
-        start: 41,
+        start: 145,
         loop: 1,
-        playlist: 'cjcDXTuubNA',
+        playlist: 'DmuSAPGV7DE',
         controls: 0,
         disablekb: 1,
         fs: 0,
