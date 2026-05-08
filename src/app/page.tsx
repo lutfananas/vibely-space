@@ -187,8 +187,9 @@ function PriceCard({
   )
 }
 
-// Floating Music Player Component — autoplay muted, tap to unmute
+// Floating Music Player Component — welcome popup then autoplay
 function MusicPlayer() {
+  const [showWelcome, setShowWelcome] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
   const playerRef = useRef<YT.Player | null>(null)
@@ -260,10 +261,19 @@ function MusicPlayer() {
     }
   }, [])
 
+  const handleWelcomeClick = () => {
+    // User interaction — unmute the video
+    if (playerRef.current) {
+      playerRef.current.unMute()
+      playerRef.current.playVideo()
+    }
+    setIsMuted(false)
+    setShowWelcome(false)
+  }
+
   const handleToggle = () => {
     if (!playerRef.current) return
     if (isMuted) {
-      // Unmute — this is the user interaction browsers require
       playerRef.current.unMute()
       playerRef.current.playVideo()
       setIsMuted(false)
@@ -277,6 +287,45 @@ function MusicPlayer() {
 
   return (
     <>
+      {/* ===== WELCOME POPUP ===== */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="relative bg-gradient-to-br from-white via-pink-50 to-rose-50 rounded-3xl p-8 sm:p-10 shadow-2xl border-2 border-pink-200 max-w-sm mx-4 text-center">
+            {/* Decorative sparkles */}
+            <div className="absolute -top-3 -left-3 text-2xl animate-sparkle">✦</div>
+            <div className="absolute -top-2 -right-4 text-xl animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</div>
+            <div className="absolute -bottom-2 -left-4 text-lg animate-sparkle" style={{ animationDelay: '1s' }}>✨</div>
+            <div className="absolute -bottom-3 -right-3 text-xl animate-sparkle" style={{ animationDelay: '0.3s' }}>✦</div>
+
+            {/* Logo */}
+            <div className="mx-auto mb-4 w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-lg shadow-pink-200/60">
+              <div className="w-full h-full rounded-full p-[2px] bg-white">
+                <img
+                  src="/logo-circle.png"
+                  alt="VIBELY SPACE"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
+            </div>
+
+            {/* Brand name */}
+            <h2 className="text-2xl font-extrabold text-primary mb-1">VIBELY SPACE ✨</h2>
+            <p className="italic text-sm text-muted-foreground mb-6">where cute meets clever ✦</p>
+
+            {/* Welcome button — disguised as enter button */}
+            <button
+              onClick={handleWelcomeClick}
+              className="bg-gradient-to-r from-primary to-rose-400 text-white font-bold text-lg px-10 py-3.5 rounded-full shadow-lg shadow-pink-300/50 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 border-2 border-white/30"
+            >
+              MULAI YUK 💙
+            </button>
+
+            {/* Subtle hint */}
+            <p className="mt-3 text-xs text-muted-foreground/60">klik untuk masuk 🎀</p>
+          </div>
+        </div>
+      )}
+
       {/* Hidden YouTube player container */}
       <div
         ref={playerContainerRef}
@@ -284,30 +333,26 @@ function MusicPlayer() {
         aria-hidden="true"
       />
 
-      {/* Floating Music Toggle Button */}
-      <button
-        onClick={handleToggle}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/50 group"
-        aria-label={isMuted ? 'Unmute music' : isPlaying ? 'Pause music' : 'Play music'}
-      >
-        {isMuted ? (
-          <span className="text-xl group-hover:scale-110 transition-transform">🔇</span>
-        ) : isPlaying ? (
-          <span className="text-xl group-hover:scale-110 transition-transform">🎵</span>
-        ) : (
-          <span className="text-xl group-hover:scale-110 transition-transform">▶️</span>
-        )}
-        {/* Pulse ring when playing unmuted */}
-        {!isMuted && isPlaying && (
-          <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-        )}
-        {/* "Tap to unmute" hint badge */}
-        {isMuted && (
-          <span className="absolute -top-2 -left-2 bg-white text-primary text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md border border-pink-200 whitespace-nowrap">
-            🔊 tap
-          </span>
-        )}
-      </button>
+      {/* Floating Music Toggle Button — only shown after welcome dismissed */}
+      {!showWelcome && (
+        <button
+          onClick={handleToggle}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/50 group"
+          aria-label={isMuted ? 'Unmute music' : isPlaying ? 'Pause music' : 'Play music'}
+        >
+          {isMuted ? (
+            <span className="text-xl group-hover:scale-110 transition-transform">🔇</span>
+          ) : isPlaying ? (
+            <span className="text-xl group-hover:scale-110 transition-transform">🎵</span>
+          ) : (
+            <span className="text-xl group-hover:scale-110 transition-transform">▶️</span>
+          )}
+          {/* Pulse ring when playing unmuted */}
+          {!isMuted && isPlaying && (
+            <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+          )}
+        </button>
+      )}
     </>
   )
 }
