@@ -4,6 +4,8 @@ declare namespace YT {
     playVideo(): void
     pauseVideo(): void
     destroy(): void
+    mute(): void
+    unMute(): void
   }
 }
 
@@ -24,6 +26,7 @@ interface YTPlayerVars {
   modestbranding?: number
   rel?: number
   playsinline?: number
+  mute?: number
 }
 
 interface YTPlayerEvents {

@@ -187,10 +187,10 @@ function PriceCard({
   )
 }
 
-// Floating Music Player Component — uses YouTube IFrame API for mobile support
+// Floating Music Player Component — autoplay muted, tap to unmute
 function MusicPlayer() {
+  const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [showIntro, setShowIntro] = useState(true)
   const playerRef = useRef<YT.Player | null>(null)
   const playerContainerRef = useRef<HTMLDivElement>(null)
 
@@ -204,7 +204,7 @@ function MusicPlayer() {
     playerRef.current = new window.YT.Player('yt-player-div', {
       videoId: 'cjcDXTuubNA',
       playerVars: {
-        autoplay: 0,
+        autoplay: 1,       // Autoplay muted works on all browsers
         start: 41,
         loop: 1,
         playlist: 'cjcDXTuubNA',
@@ -214,10 +214,13 @@ function MusicPlayer() {
         modestbranding: 1,
         rel: 0,
         playsinline: 1,
+        mute: 1,           // Start muted so autoplay is allowed
       },
       events: {
-        onReady: () => {
-          // Player ready
+        onReady: (event: { target: YT.Player }) => {
+          // Mute then play — autoplay with mute is always allowed
+          event.target.mute()
+          event.target.playVideo()
         },
         onStateChange: (event: YT.OnStateChangeEvent) => {
           if (event.data === window.YT.PlayerState.PLAYING) {
@@ -232,7 +235,6 @@ function MusicPlayer() {
 
   // Load YouTube IFrame API once
   useEffect(() => {
-    // Add YT API script
     if (!document.getElementById('yt-iframe-api')) {
       const tag = document.createElement('script')
       tag.id = 'yt-iframe-api'
@@ -240,20 +242,17 @@ function MusicPlayer() {
       document.head.appendChild(tag)
     }
 
-    // Define callback that fires when API is ready
     const origReady = window.onYouTubeIframeAPIReady
     window.onYouTubeIframeAPIReady = () => {
       origReady?.()
       createPlayer()
     }
 
-    // If API already loaded (rare), create player immediately
     if (window.YT?.Player) {
       createPlayer()
     }
 
     return () => {
-      // Cleanup
       if (playerRef.current) {
         try { playerRef.current.destroy() } catch {}
         playerRef.current = null
@@ -261,20 +260,16 @@ function MusicPlayer() {
     }
   }, [])
 
-  const startMusic = () => {
-    setShowIntro(false)
-    // Small delay to ensure DOM is ready after state change
-    setTimeout(() => {
-      if (playerRef.current) {
-        playerRef.current.playVideo()
-      }
-    }, 200)
-  }
-
-  const toggleMusic = () => {
+  const handleToggle = () => {
     if (!playerRef.current) return
-    if (isPlaying) {
+    if (isMuted) {
+      // Unmute — this is the user interaction browsers require
+      playerRef.current.unMute()
+      playerRef.current.playVideo()
+      setIsMuted(false)
+    } else if (isPlaying) {
       playerRef.current.pauseVideo()
+      setIsMuted(true)
     } else {
       playerRef.current.playVideo()
     }
@@ -282,27 +277,6 @@ function MusicPlayer() {
 
   return (
     <>
-      {/* Welcome Music Intro Overlay */}
-      {showIntro && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center animate-fade-in cursor-pointer"
-          onClick={startMusic}
-        >
-          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-pink-300/30 border-2 border-pink-200 text-center max-w-sm mx-4 animate-slide-up">
-            <div className="text-5xl mb-4">🎵</div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-foreground mb-2">
-              Welcome to VIBELY SPACE!
-            </h3>
-            <p className="text-muted-foreground text-sm sm:text-base mb-5">
-              Klik untuk mulai mendengarkan musik ✨
-            </p>
-            <div className="inline-flex items-center gap-2 bg-primary text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-pink-300/40">
-              🎶 Play Music
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Hidden YouTube player container */}
       <div
         ref={playerContainerRef}
@@ -311,23 +285,29 @@ function MusicPlayer() {
       />
 
       {/* Floating Music Toggle Button */}
-      {!showIntro && (
-        <button
-          onClick={toggleMusic}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/50 group"
-          aria-label={isPlaying ? 'Pause music' : 'Play music'}
-        >
-          {isPlaying ? (
-            <span className="text-xl group-hover:scale-110 transition-transform">🎵</span>
-          ) : (
-            <span className="text-xl group-hover:scale-110 transition-transform">🔇</span>
-          )}
-          {/* Pulse ring when playing */}
-          {isPlaying && (
-            <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-          )}
-        </button>
-      )}
+      <button
+        onClick={handleToggle}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/50 group"
+        aria-label={isMuted ? 'Unmute music' : isPlaying ? 'Pause music' : 'Play music'}
+      >
+        {isMuted ? (
+          <span className="text-xl group-hover:scale-110 transition-transform">🔇</span>
+        ) : isPlaying ? (
+          <span className="text-xl group-hover:scale-110 transition-transform">🎵</span>
+        ) : (
+          <span className="text-xl group-hover:scale-110 transition-transform">▶️</span>
+        )}
+        {/* Pulse ring when playing unmuted */}
+        {!isMuted && isPlaying && (
+          <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+        )}
+        {/* "Tap to unmute" hint badge */}
+        {isMuted && (
+          <span className="absolute -top-2 -left-2 bg-white text-primary text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md border border-pink-200 whitespace-nowrap">
+            🔊 tap
+          </span>
+        )}
+      </button>
     </>
   )
 }
