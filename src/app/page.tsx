@@ -431,7 +431,7 @@ function MusicPlayer() {
               onClick={handleWelcomeClick}
               className="bg-gradient-to-r from-primary to-rose-400 text-white font-bold text-lg px-10 py-3.5 rounded-full shadow-lg shadow-pink-300/50 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 border-2 border-white/30"
             >
-              MULAI YUK 💙
+              START VIBING 💙
             </button>
 
             {/* Subtle hint */}
