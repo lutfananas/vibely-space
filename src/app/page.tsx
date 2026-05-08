@@ -187,6 +187,79 @@ function PriceCard({
   )
 }
 
+// Floating Music Player Component
+function MusicPlayer() {
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [showIntro, setShowIntro] = useState(true)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  const startMusic = () => {
+    setIsPlaying(true)
+    setShowIntro(false)
+  }
+
+  const toggleMusic = () => {
+    setIsPlaying(prev => !prev)
+  }
+
+  return (
+    <>
+      {/* Welcome Music Intro Overlay */}
+      {showIntro && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center animate-fade-in cursor-pointer"
+          onClick={startMusic}
+        >
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-pink-300/30 border-2 border-pink-200 text-center max-w-sm mx-4 animate-slide-up">
+            <div className="text-5xl mb-4">🎵</div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-foreground mb-2">
+              Welcome to VIBELY SPACE!
+            </h3>
+            <p className="text-muted-foreground text-sm sm:text-base mb-5">
+              Klik untuk mulai mendengarkan musik ✨
+            </p>
+            <div className="inline-flex items-center gap-2 bg-primary text-white font-bold px-6 py-3 rounded-full shadow-lg shadow-pink-300/40">
+              🎶 Play Music
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden YouTube iframe for audio */}
+      <div className="fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
+        {isPlaying && (
+          <iframe
+            ref={iframeRef}
+            src="https://www.youtube.com/embed/V1MZp3ESWf8?autoplay=1&start=6&loop=1&playlist=V1MZp3ESWf8&controls=0"
+            title="Background Music"
+            allow="autoplay; encrypted-media"
+            style={{ width: 0, height: 0, border: 0 }}
+          />
+        )}
+      </div>
+
+      {/* Floating Music Toggle Button */}
+      {!showIntro && (
+        <button
+          onClick={toggleMusic}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-rose-400 text-white shadow-xl shadow-pink-300/50 flex items-center justify-center hover:scale-110 transition-all duration-300 border-2 border-white/50 group"
+          aria-label={isPlaying ? 'Pause music' : 'Play music'}
+        >
+          {isPlaying ? (
+            <span className="text-xl group-hover:scale-110 transition-transform">🎵</span>
+          ) : (
+            <span className="text-xl group-hover:scale-110 transition-transform">🔇</span>
+          )}
+          {/* Pulse ring when playing */}
+          {isPlaying && (
+            <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+          )}
+        </button>
+      )}
+    </>
+  )
+}
+
 // Main page
 export default function Home() {
   const [mounted, setMounted] = useState(false)
@@ -202,6 +275,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* ===== MUSIC PLAYER ===== */}
+      <MusicPlayer />
+
       {/* ===== HEADER / NAV ===== */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-pink-200/50 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
