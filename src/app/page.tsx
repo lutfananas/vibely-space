@@ -100,45 +100,44 @@ function PriceCard({
       className={`transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
+      {/* Anime Avatar - positioned on top of card, centered */}
+      <div className="flex justify-center relative z-10 -mb-10">
+        <div className="relative">
+          {/* Glow effect behind */}
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-md opacity-40 scale-110" />
+          {/* Pink border ring */}
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-lg shadow-pink-200/60">
+            {/* White inner ring */}
+            <div className="w-full h-full rounded-full p-[2px] bg-white">
+              {/* Soft pink inner */}
+              <div className="w-full h-full rounded-full p-[1px] bg-gradient-to-br from-pink-100 to-rose-100 overflow-hidden">
+                <img
+                  src="/anime-circle.png"
+                  alt="VIBELY SPACE"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </div>
+            </div>
+          </div>
+          {/* Sparkle decorations */}
+          <span className="absolute -top-1 -right-1 text-xs animate-sparkle">✦</span>
+          <span className="absolute -bottom-0.5 -left-1 text-[10px] animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</span>
+        </div>
+      </div>
+
       <Card
-        className={`relative overflow-hidden border-2 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group cursor-pointer ${
+        className={`relative overflow-visible border-2 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group cursor-pointer ${
           popular
             ? 'border-primary bg-gradient-to-br from-white via-pink-50 to-rose-50 shadow-lg shadow-pink-200/50'
             : 'border-pink-200 bg-white hover:border-primary/50 shadow-md shadow-pink-100/30'
         }`}
       >
         {popular && (
-          <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl">
+          <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl z-20">
             POPULER ✨
           </div>
         )}
-        <CardContent className="p-5 sm:p-6">
-          {/* Anime Avatar with Decorative Frame */}
-          <div className="flex justify-center mb-4 -mt-1">
-            <div className="relative">
-              {/* Glow effect behind */}
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-md opacity-40 scale-110" />
-              {/* Pink border ring */}
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-lg shadow-pink-200/60">
-                {/* White inner ring */}
-                <div className="w-full h-full rounded-full p-[2px] bg-white">
-                  {/* Soft pink inner */}
-                  <div className="w-full h-full rounded-full p-[1px] bg-gradient-to-br from-pink-100 to-rose-100 overflow-hidden">
-                    <img
-                      src="/anime-framed.png"
-                      alt="VIBELY SPACE"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* Sparkle decorations */}
-              <span className="absolute -top-1 -right-1 text-xs animate-sparkle">✦</span>
-              <span className="absolute -bottom-0.5 -left-1 text-[10px] animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</span>
-              <span className="absolute top-1/2 -right-2 text-[8px] animate-sparkle" style={{ animationDelay: '1s' }}>✦</span>
-            </div>
-          </div>
-
+        <CardContent className="p-5 sm:p-6 pt-8">
           {/* Poster Badge */}
           <div className="flex items-center justify-center mb-4">
             <div className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base sm:text-lg font-bold ${
