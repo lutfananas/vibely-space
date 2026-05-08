@@ -52,3 +52,23 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# Z scripts
+.zscripts/
+
+# Upload directory
+upload/
+
+# Worklog
+worklog.md
+
+# Mini services
+mini-services/
+
+# DB
+*.db
+*.db-journal
+prisma/*.db
+
+# Download
+download/
