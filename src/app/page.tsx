@@ -113,6 +113,32 @@ function PriceCard({
           </div>
         )}
         <CardContent className="p-5 sm:p-6">
+          {/* Anime Avatar with Decorative Frame */}
+          <div className="flex justify-center mb-4 -mt-1">
+            <div className="relative">
+              {/* Glow effect behind */}
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-md opacity-40 scale-110" />
+              {/* Pink border ring */}
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-lg shadow-pink-200/60">
+                {/* White inner ring */}
+                <div className="w-full h-full rounded-full p-[2px] bg-white">
+                  {/* Soft pink inner */}
+                  <div className="w-full h-full rounded-full p-[1px] bg-gradient-to-br from-pink-100 to-rose-100 overflow-hidden">
+                    <img
+                      src="/anime-framed.png"
+                      alt="VIBELY SPACE"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* Sparkle decorations */}
+              <span className="absolute -top-1 -right-1 text-xs animate-sparkle">✦</span>
+              <span className="absolute -bottom-0.5 -left-1 text-[10px] animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</span>
+              <span className="absolute top-1/2 -right-2 text-[8px] animate-sparkle" style={{ animationDelay: '1s' }}>✦</span>
+            </div>
+          </div>
+
           {/* Poster Badge */}
           <div className="flex items-center justify-center mb-4">
             <div className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base sm:text-lg font-bold ${
