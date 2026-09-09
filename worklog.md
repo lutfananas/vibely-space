@@ -52,3 +52,23 @@ Work Log:
 
 Stage Summary:
 - v3 dashboard design live; v2 remains recoverable via git history (commit 0a3241b), v1 via tag v1-original-design
+
+---
+Task ID: fix-poster-divider
+Agent: Main Agent (Super Z)
+Task: Perbaiki penempatan poster (jadi sekat landscape 19:6, wajah terlihat) + ubah 100+ jadi 10K++ di hero
+
+Work Log:
+- User komplain: poster pertama (hero-image.png) tampil kecil (thumbnail 48px) di bawah chart "Pertumbuhan Followers" pada DashboardMock hero
+- Face detection (OpenCV Haar cascade) pada poster 512x768: wajah di x[340,393] y[101,154], center (366,127)
+- scripts/crop_divider.py: crop full-width 512x162 (rasio 19:6) dari y=60 (wajah ~41% dari atas, bahu masuk), upscale 3x Lanczos + unsharp -> public/poster-divider.jpg (1536x486, q90)
+- page.tsx: ganti thumbnail poster di DashboardMock dengan tile gradient emoji 🎉 (poster tidak lagi tampil kecil di bawah chart)
+- page.tsx: hero "100+ Folls" -> "10K++ Folls"
+- page.tsx: section baru "POSTER DIVIDER" (sekat) antara About dan Price List: banner landscape aspect-[19/6], rounded-[2.5rem], border putih, shadow, badge glass "📷 Poster Giveaway ✨", hover zoom halus
+- Build sukses, deploy --prod --scope unita, verifikasi 200 + "10K++ Folls" + poster-divider.jpg ter-serve (194KB)
+
+Stage Summary:
+- Live di https://vibely-space.vercel.app
+- Poster kini sekat landscape 19:6 antara section Tentang dan Price List, wajah terlihat
+- Dashboard mockup tidak lagi menampilkan poster kecil
+- Hero: "Dapatkan 10K++ Folls Real Indo + Aktif"

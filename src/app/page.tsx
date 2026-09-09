@@ -200,11 +200,9 @@ function DashboardMock() {
 
           {/* Post preview row */}
           <div className="flex items-center gap-3 rounded-2xl border border-pink-100 p-3 bg-white">
-            <img
-              src="/hero-image.png"
-              alt="Post Giveaway"
-              className="w-12 h-12 rounded-xl object-cover border border-pink-100 flex-shrink-0"
-            />
+            <div className="w-12 h-12 rounded-xl gradient-animated flex items-center justify-center text-xl flex-shrink-0 shadow-sm">
+              🎉
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-foreground truncate">Post Giveaway Aktif 🎉</p>
               <p className="text-[10px] text-muted-foreground">Akunmu ditag di setiap postingan</p>
@@ -623,7 +621,7 @@ export default function Home() {
                   </span>
                   <br />
                   <span className="text-[0.62em] sm:text-[0.65em]">Dapatkan </span>
-                  <span className="text-[0.62em] sm:text-[0.65em] gradient-text font-bold">100+ Folls</span>
+                  <span className="text-[0.62em] sm:text-[0.65em] gradient-text font-bold">10K++ Folls</span>
                   <span className="text-[0.62em] sm:text-[0.65em]"> Real Indo + Aktif 💞</span>
                 </h1>
 
@@ -771,6 +769,25 @@ export default function Home() {
                 </Reveal>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ===== POSTER DIVIDER — landscape 19:6 ===== */}
+        <section className="py-8 sm:py-12 relative">
+          <div className="max-w-6xl mx-auto px-4">
+            <Reveal>
+              <div className="relative group rounded-[2.5rem] overflow-hidden border-4 border-white shadow-cute-lg">
+                <img
+                  src="/poster-divider.jpg"
+                  alt="Poster Giveaway VIBELY SPACE"
+                  className="w-full aspect-[19/6] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none" />
+                <span className="absolute top-4 left-4 sm:top-5 sm:left-5 glass text-[10px] sm:text-xs font-bold uppercase tracking-widest text-primary border border-pink-200/80 px-4 py-2 rounded-full shadow-sm">
+                  📷 Poster Giveaway ✨
+                </span>
+              </div>
+            </Reveal>
           </div>
         </section>
 
