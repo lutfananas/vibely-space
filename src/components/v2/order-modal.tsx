@@ -1,12 +1,14 @@
 "use client";
 
 /* ============ VIBELY 2.0 — Order Flow V2 (PRD §15, revised) ============ */
-/* Step: Select Package → Instagram Username → Campaign Info → Review → Kirim via WhatsApp → Campaign ID
+/* Step: Select Package → Instagram Username → Campaign Info → Review → Kirim via WhatsApp
    Catatan revisi: Pembayaran TIDAK dipilih di sini. Setelah Review, user langsung
    diarahkan ke WhatsApp dengan pesan pre-filled berisi semua detail order. Admin
-   (penerima WA) yang akan verifikasi & kirim nomor rekening. */
+   (penerima WA) yang akan verifikasi & kirim nomor rekening.
+   Tanpa Campaign ID di flow order — ID baru ditetapkan admin saat memproses pesanan,
+   agar tidak membingungkan user yang pesanannya belum diproses. */
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -31,24 +33,21 @@ const STEPS: { n: Step; label: string; icon: typeof Package }[] = [
   { n: 1, label: "Package", icon: Package },
   { n: 2, label: "Username", icon: AtSign },
   { n: 3, label: "Review", icon: Check },
-  { n: 4, label: "Campaign ID", icon: BadgeCheck },
 ];
 
 const START_OPTIONS = ["Hari ini", "Besok", "2 hari lagi"];
 
-/* WhatsApp admin — nomor tujuan order. User/admin akan verifikasi & kirim rekening dari sini. */
-const WA_ADMIN_NUMBER = "6281234567890"; // TODO: ganti nomor admin asli
+/* WhatsApp admin — nomor tujuan order. Admin akan verifikasi & kirim rekening dari sini. */
+const WA_ADMIN_NUMBER = "6285649106233";
 
 export function OrderModal({
   open,
   pkgId,
   onOpenChange,
-  onTrack,
 }: {
   open: boolean;
   pkgId?: string;
   onOpenChange: (v: boolean) => void;
-  onTrack: (campaignId?: string) => void;
 }) {
   /* State awal diturunkan dari props — komponen di-remount via `key`
      di provider setiap kali dibuka, jadi tidak perlu effect untuk reset. */
@@ -58,13 +57,7 @@ export function OrderModal({
   const [username, setUsername] = useState("");
   const [campName, setCampName] = useState("");
   const [startAt, setStartAt] = useState(START_OPTIONS[0]);
-  const [campaignId, setCampaignId] = useState("");
   const [err, setErr] = useState("");
-
-  const newId = useMemo(() => {
-    const n = 190 + Math.floor(Math.random() * 40);
-    return `VIB-2026-${String(n).padStart(5, "0")}`;
-  }, []);
 
   const go = (s: Step) => {
     setErr("");
@@ -81,8 +74,9 @@ export function OrderModal({
   };
 
   /* Build pesan WhatsApp pre-filled dengan semua detail order.
-     User TIDAK perlu mengetik ulang — cukup klik, WA terbuka, tinggal kirim. */
-  const buildWaMessage = (id: string, p: Pkg, uname: string, cname: string, start: string) => {
+     User TIDAK perlu mengetik ulang — cukup klik, WA terbuka, tinggal kirim.
+     Tanpa Campaign ID — admin yang menetapkan ID saat memproses pesanan. */
+  const buildWaMessage = (p: Pkg, uname: string, cname: string, start: string) => {
     const cleanHandle = uname.trim().replace(/^@/, "");
     const campaignDisplay = cname.trim() || `Giveaway Campaign ${p.name}`;
     const lines = [
@@ -90,7 +84,6 @@ export function OrderModal({
       "",
       "Saya ingin order campaign giveaway dengan detail berikut:",
       "",
-      `🆔 Campaign ID: ${id}`,
       `📦 Paket: ${p.name} (${p.code})`,
       `👥 Target Followers: ${fmtID(p.target)}`,
       `⏱️ Durasi: ${p.duration}`,
@@ -108,14 +101,11 @@ export function OrderModal({
     `https://wa.me/${WA_ADMIN_NUMBER}?text=${encodeURIComponent(msg)}`;
 
   /* Saat user klik "Kirim via WhatsApp" di step Review:
-     1. Generate Campaign ID baru
-     2. Buka WhatsApp di tab baru dengan pesan pre-filled
-     3. Pindah ke step sukses (Campaign ID) */
+     1. Buka WhatsApp di tab baru dengan pesan pre-filled
+     2. Pindah ke step sukses (konfirmasi kirim) */
   const sendToWhatsApp = () => {
     if (!pkg) return;
-    const id = newId;
-    setCampaignId(id);
-    const msg = buildWaMessage(id, pkg, username, campName, startAt);
+    const msg = buildWaMessage(pkg, username, campName, startAt);
     const url = buildWaLink(msg);
     if (typeof window !== "undefined") {
       window.open(url, "_blank", "noopener,noreferrer");
@@ -323,42 +313,53 @@ export function OrderModal({
             </div>
           )}
 
-          {/* STEP 4 — Success / Campaign ID (setelah WA terkirim) */}
-          {step === 4 && (
+          {/* STEP 4 — Success (setelah WA terbuka). Tanpa Campaign ID —
+              admin yang menetapkan ID saat memproses pesanan. */}
+          {step === 4 && pkg && (
             <div className="text-center space-y-5 py-2 animate-pop-in">
               <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-50 ring-8 ring-emerald-50/60">
                 <BadgeCheck className="h-8 w-8 text-emerald-500" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Campaign ID Anda</p>
-                <p className="mt-1 font-display text-2xl font-bold tracking-tight text-ink">{campaignId}</p>
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3.5 py-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400 animate-pulse-ring-yellow" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-amber-600">Waiting</span>
+                <p className="font-display text-xl font-bold tracking-tight text-ink">
+                  Pesanan Anda Siap Dikirim
+                </p>
+                <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200 px-3.5 py-1.5">
+                  <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
+                    WhatsApp Terbuka
+                  </span>
                 </div>
               </div>
+              <div className="mx-auto max-w-sm rounded-2xl border border-[#E3EAF6] bg-[#F9FBFF] p-4 text-left text-sm">
+                <p className="font-semibold text-ink">
+                  {pkg.name} — {fmtID(pkg.target)} Followers · Rp{fmtID(pkg.price)}
+                </p>
+                <p className="mt-0.5 text-muted-foreground">
+                  @{username.trim().replace(/^@/, "")} · Mulai {startAt}
+                </p>
+              </div>
               <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground">
-                WhatsApp telah terbuka dengan detail order Anda. Tim VIBELY akan <b>verifikasi & kirim nomor
-                rekening</b> via WhatsApp. Setelah pembayaran dikonfirmasi, campaign aktif — pantau progress lewat{" "}
-                <span className="font-semibold text-ink">Track Campaign</span> dengan ID di atas.
+                WhatsApp telah terbuka dengan detail order Anda — tinggal tekan <b>kirim</b>. Tim VIBELY akan{" "}
+                <b>verifikasi & kirim nomor rekening</b> via WhatsApp. Setelah pembayaran dikonfirmasi,
+                campaign langsung diproses.
               </p>
               <div className="grid gap-2">
-                <button
-                  onClick={() => onTrack(campaignId)}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-white hover:bg-navy transition-colors"
-                >
-                  Track Campaign Sekarang
-                  <ArrowRight className="h-4 w-4" />
-                </button>
                 <a
-                  href={buildWaLink(buildWaMessage(campaignId, pkg as Pkg, username, campName, startAt))}
+                  href={buildWaLink(buildWaMessage(pkg, username, campName, startAt))}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D8E2F2] bg-white px-5 py-3 text-sm font-semibold text-ink hover:border-emerald-400 hover:text-emerald-600 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(16,185,129,0.6)] hover:bg-emerald-600 transition-colors"
                 >
-                  <MessageCircle className="h-4 w-4 text-emerald-500" />
+                  <MessageCircle className="h-4 w-4" />
                   Buka WhatsApp Lagi
                 </a>
+                <button
+                  onClick={() => onOpenChange(false)}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D8E2F2] bg-white px-5 py-3 text-sm font-semibold text-ink hover:border-[#2E6BFF]/40 transition-colors"
+                >
+                  Selesai
+                </button>
               </div>
             </div>
           )}

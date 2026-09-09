@@ -184,3 +184,29 @@ Stage Summary:
 - Tidak ada lagi pemilihan metode pembayaran (QRIS/BCA/E-Wallet) di UI
 - Nomor admin masih placeholder 6281234567890 -> ganti ke nomor asli sebelum go-live
 - Rollback: git checkout src/components/v2/order-modal.tsx@HEAD~1 (kembali ke step Payment)
+
+---
+Task ID: wa-order-handoff-v2
+Agent: Main Agent (Super Z)
+Task: (1) Set nomor WA admin asli 6285649106233. (2) Hapus Campaign ID dari flow order — hindari kebingungan user yang pesanannya belum diproses. TIDAK deploy Vercel.
+
+Work Log:
+- order-modal.tsx:
+  - WA_ADMIN_NUMBER "6281234567890" (placeholder) -> "6285649106233" (nomor asli user), TODO comment dihapus
+  - Campaign ID dihapus total dari flow: state campaignId + useMemo newId dihapus, import useMemo dibuang
+  - buildWaMessage(id,...) -> buildWaMessage(p, uname, cname, start): baris "🆔 Campaign ID: ..." dihapus dari pesan WA (admin yang menetapkan ID internal saat proses)
+  - sendToWhatsApp(): tanpa generate ID — langsung buka WA + go(4)
+  - STEPS array jadi 3 entri (Package/Username/Review); entry ke-4 "Campaign ID" dihapus
+  - Step 4 sukses didesain ulang: judul "Pesanan Anda Siap Dikirim" + pill hijau "WhatsApp Terbuka" (mengganti pill amber WAITING) + mini-ringkasan order (paket·target·harga, @username·mulai) + tombol "Buka WhatsApp Lagi" (emerald, primary) + tombol "Selesai" (close modal); tombol "Track Campaign Sekarang" dihapus (tidak relevan tanpa ID)
+  - Prop onTrack dihapus dari OrderModal
+- provider.tsx: openTrackFromOrder + prop onTrack dihapus dari <OrderModal> (openTrack tetap ada untuk navbar Track Campaign)
+- data.ts: WA_LINK support umum (Footer/Contact) 6281234567890 -> 6285649106233 (konsistensi semua titik WA)
+- Verifikasi: tsc bersih di src/components/v2 (sisa error hanya skills/ — tidak terkait), eslint 0 error, next build ✓ 6.4s semua route generate; node test: URL WA ter-encode benar dengan nomor 6285649106233
+- Grep final: tidak ada sisa 6281234567890 / campaignId / onTrack di order flow
+- TIDAK dilakukan: deploy Vercel (permintaan eksplisit user)
+
+Stage Summary:
+- Flow order final: Package -> Username -> Review -> "Kirim via WhatsApp" (wa.me/6285649106233, pesan pre-filled TANPA Campaign ID) -> sukses: "Pesanan Anda Siap Dikirim" + Buka WhatsApp Lagi / Selesai
+- Semua link WhatsApp di situs (order flow + WA_LINK support footer/kontak) kini pakai nomor asli 6285649106233
+- Pesan WA yang diterima admin: paket+code, target, durasi, @instagram, nama campaign, jadwal, total — admin verifikasi & balas dengan nomor rekening
+- Rollback: git checkout HEAD -- src/components/v2/order-modal.tsx src/components/v2/provider.tsx src/lib/data.ts

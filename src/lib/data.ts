@@ -361,5 +361,5 @@ export const TRUST_STATS = [
 /* ---------- WHATSAPP ---------- */
 
 export const WA_LINK =
-  "https://wa.me/6281234567890?text=Halo%20VIBELY%20SPACE%2C%20saya%20mau%20tanya%20soal%20campaign%20giveaway";
+  "https://wa.me/6285649106233?text=Halo%20VIBELY%20SPACE%2C%20saya%20mau%20tanya%20soal%20campaign%20giveaway";
 export const IG_LINK = "https://instagram.com/vibely.space";

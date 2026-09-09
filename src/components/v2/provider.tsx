@@ -36,21 +36,12 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     setTrackOpen(true);
   }, []);
 
-  /* Track bisa dibuka dari dalam OrderModal (sukses step) */
-  const openTrackFromOrder = useCallback((campaignId?: string) => {
-    setOrderOpen(false);
-    window.setTimeout(() => {
-      setTrackId(campaignId);
-      setTrackOpen(true);
-    }, 220);
-  }, []);
-
   const value = useMemo(() => ({ openOrder, openTrack }), [openOrder, openTrack]);
 
   return (
     <ModalCtx.Provider value={value}>
       {children}
-      <OrderModal key={orderNonce} open={orderOpen} pkgId={orderPkg} onOpenChange={setOrderOpen} onTrack={openTrackFromOrder} />
+      <OrderModal key={orderNonce} open={orderOpen} pkgId={orderPkg} onOpenChange={setOrderOpen} />
       <TrackModal key={trackId ?? "none"} open={trackOpen} initialId={trackId} onOpenChange={setTrackOpen} />
     </ModalCtx.Provider>
   );
