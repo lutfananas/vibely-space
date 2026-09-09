@@ -278,3 +278,33 @@ Work Log:
 Stage Summary:
 - Testimoni sekarang carousel interaktif: swipe di HP, drag mouse di desktop, panah + dots navigasi; desain kartu & judul tidak berubah
 - Rollback: git checkout HEAD~1 -- src/app/page.tsx src/app/globals.css
+
+---
+Task ID: order-modal-2.0-port
+Agent: Main Agent (Super Z)
+Task: Port flow order V2.0 ke versi live (pink cute): klik paket -> modal isi data -> review -> WhatsApp, TANPA pemilihan bank. TIDAK deploy sebelum diminta.
+
+Work Log:
+- PACKAGES array jadi single source of truth (PKG-02..07: poster/price/jaminan/keepHari/gain/popular); PriceList kini map PACKAGES
+- OrderModal (src/app/page.tsx, gaya pink cute — rounded-[2rem], shadow-cute, animate-pop-in, glow radial tanpa blur):
+  - Step 1 Paket: grid 2 kolom, pre-selected dari kartu yang diklik, badge LARIS utk popular
+  - Step 2 Isi Data: ringkasan paket + Username Instagram (wajib, @ auto-strip, validasi inline "Isi username kamu dulu ya 🥺") + Nama Campaign (opsional, default "Sponsor Giveaway") + Rencana Mulai (date, default hari ini, format id-ID di pesan)
+  - Step 3 Review: 8 baris ringkasan + Total + kartu hijau "Lanjut via WhatsApp"
+  - Step 4 Sukses: "Pesanan Anda Siap Dikirim" + pill WhatsApp Terbuka + mini ringkasan + Buka WhatsApp Lagi / Selesai
+  - TANPA pemilihan bank/QRIS/E-Wallet, TANPA Campaign ID (sesuai flow final 2.0)
+  - Pesan WA: paket+id, jaminan, keep hari, gain, @instagram, campaign, mulai, minta verifikasi + nomor rekening; wa.me/WA_NUMBER (6285694106233, konsisten dgn live)
+  - UX: bottom-sheet di mobile / center di desktop, body scroll lock, ESC + klik overlay + tombol X utk tutup, back button, step pills (Paket/Isi Data/Kirim)
+- Wiring: OrderCtx (createContext) di page.tsx; Home wrap OrderCtx.Provider + mount <OrderModal>; PriceCard CTA <a href=waOrderLink> -> <button openOrder(pkg.id)> caption "isi form singkat, langsung lanjut ke WhatsApp ✦"; navbar "💬 Order" -> openOrder() (step 1 tanpa preselect); waOrderLink dihapus (tidak terpakai)
+- Verifikasi (prod build :3210, tsc+eslint+build bersih):
+  - Klik kartu PKG-04 -> modal terbuka pre-selected PKG-04 ✓
+  - Flow penuh: lanjut -> isi "rinasweet"/"Giveaway Rina" -> review 8 baris benar -> Kirim via WA (intercept window.open): URL wa.me/6285694106233 dgn pesan lengkap TANPA bank & TANPA Campaign ID ✓
+  - Step 4 sukses + tombol Buka Lagi/Selesai ✓; Selesai menutup modal ✓
+  - Navbar Order -> step 1 tanpa preselect, 6 paket ✓; lanjut disabled saat belum pilih ✓
+  - Username kosong diblok + pesan error ✓; input "@budi.dev" -> "@budi.dev" (tanpa @@) di review ✓
+  - iPhone 14: bottom-sheet full-width, scroll lock, ESC tutup + overflow dipulihkan ✓
+- TIDAK dilakukan: deploy Vercel (menunggu diminta user)
+
+Stage Summary:
+- Flow order final di versi live: klik paket (atau tombol Order di navbar) -> modal 3 langkah -> WA terbuka dengan semua data terisi -> admin verifikasi & kirim rekening
+- Catatan MultiEdit: terbukti tidak sepenuhnya atomik (edit awal teraplikasi sebelum error) — selalu verifikasi state file setelah MultiEdit gagal
+- Rollback: git checkout HEAD~1 -- src/app/page.tsx
