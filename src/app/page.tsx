@@ -130,6 +130,204 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
 }
 
 /* ============================================================
+   GROWTH CHART — full-width dramatic follower growth proof
+   ============================================================ */
+
+const GROWTH_VALUES = [120, 350, 700, 1200, 1900, 2800, 3900, 5200, 6600, 8000, 9200, 10000]
+
+function smoothPath(pts: { x: number; y: number }[]) {
+  let d = `M${pts[0].x},${pts[0].y}`
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)]
+    const p1 = pts[i]
+    const p2 = pts[i + 1]
+    const p3 = pts[Math.min(pts.length - 1, i + 2)]
+    const c1x = p1.x + (p2.x - p0.x) / 6
+    const c1y = p1.y + (p2.y - p0.y) / 6
+    const c2x = p2.x - (p3.x - p1.x) / 6
+    const c2y = p2.y - (p3.y - p1.y) / 6
+    d += ` C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`
+  }
+  return d
+}
+
+function GrowthChart() {
+  const { ref, isInView } = useInView(0.2)
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (!isInView) return
+    let raf = 0
+    const t0 = performance.now()
+    const duration = 2400
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / duration)
+      const eased = 1 - Math.pow(1 - p, 3)
+      setCount(Math.round(eased * 10000))
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [isInView])
+
+  const X0 = 56, X1 = 1156, Y0 = 380, YMAX = 56
+  const pts = GROWTH_VALUES.map((v, i) => ({
+    x: X0 + (i * (X1 - X0)) / (GROWTH_VALUES.length - 1),
+    y: Y0 - (v / 10500) * (Y0 - YMAX),
+  }))
+  const line = smoothPath(pts)
+  const area = `${line} L${X1},${Y0} L${X0},${Y0} Z`
+  const yTicks = [
+    { v: 0, label: '0' },
+    { v: 2500, label: '2,5K' },
+    { v: 5000, label: '5K' },
+    { v: 7500, label: '7,5K' },
+    { v: 10000, label: '10K' },
+  ]
+  const xTicks = [
+    { i: 0, label: 'W1', anchor: 'start' },
+    { i: 2, label: 'W3', anchor: 'middle' },
+    { i: 5, label: 'W6', anchor: 'middle' },
+    { i: 8, label: 'W9', anchor: 'middle' },
+    { i: 11, label: 'W12', anchor: 'end' },
+  ]
+
+  return (
+    <section className="relative w-full overflow-hidden py-14 sm:py-20 bg-gradient-to-b from-pink-50/70 via-white to-sky-50/70">
+      <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
+      <div className="absolute -top-24 left-1/4 w-96 h-96 bg-pink-200/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 right-[18%] w-96 h-96 bg-sky-200/30 rounded-full blur-3xl pointer-events-none" />
+
+      <div ref={ref} className="relative w-full px-4 sm:px-8">
+        {/* header */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8 sm:mb-10">
+          <div className="text-center lg:text-left">
+            <span className="inline-flex items-center gap-2 glass text-xs sm:text-sm font-bold uppercase tracking-widest px-5 py-2 rounded-full border border-pink-200/80 text-primary shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              Live Growth — Setelah Order
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold text-foreground leading-tight mt-5">
+              Followers <span className="gradient-text">Naik Drastis</span> Sampai 10K+++ 🚀
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg mt-3 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              Ini dia buktinya! Begitu jadi Sponsor Giveaway VIBELY SPACE, followers kamu mengalir
+              deras minggu demi minggu sampai tembus 10K+++.
+            </p>
+          </div>
+          <div className="glass rounded-3xl border border-pink-200/80 shadow-cute px-7 py-5 text-center shrink-0 mx-auto lg:mx-0">
+            <p className="text-[10px] font-bold tracking-[0.25em] text-muted-foreground">TOTAL FOLLS MASUK</p>
+            <p className="font-display text-4xl sm:text-5xl font-bold gradient-text leading-tight mt-1">
+              {count.toLocaleString('id-ID')}<span className="text-[0.55em] align-top">+++</span>
+            </p>
+          </div>
+        </div>
+
+        {/* chart card */}
+        <div className="relative bg-white/90 rounded-[2rem] border border-pink-100 shadow-cute-lg p-3 sm:p-6 lg:p-8">
+          <div className="relative">
+            <svg viewBox="0 0 1200 420" className="w-full h-auto block" role="img" aria-label="Grafik pertumbuhan followers naik drastis sampai 10K+++ setelah order paket">
+              <defs>
+                <linearGradient id="gcLine" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#F472B6" />
+                  <stop offset="55%" stopColor="#E91E8C" />
+                  <stop offset="100%" stopColor="#0EA5E9" />
+                </linearGradient>
+                <linearGradient id="gcArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#E91E8C" stopOpacity="0.30" />
+                  <stop offset="55%" stopColor="#F472B6" stopOpacity="0.12" />
+                  <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.02" />
+                </linearGradient>
+              </defs>
+
+              {/* grid + y labels */}
+              {yTicks.map(t => {
+                const y = Y0 - (t.v / 10500) * (Y0 - YMAX)
+                return (
+                  <g key={t.v}>
+                    <line
+                      x1={X0} y1={y} x2={X1} y2={y}
+                      stroke="#F9A8D4"
+                      strokeOpacity={t.v === 0 ? 0.55 : 0.3}
+                      strokeWidth={t.v === 0 ? 2 : 1.5}
+                      strokeDasharray={t.v === 0 ? undefined : '4 7'}
+                    />
+                    <text x={X0 - 12} y={y + 5} textAnchor="end" fontSize="15" fontWeight="600" fill="#94A3B8">{t.label}</text>
+                  </g>
+                )
+              })}
+
+              {/* x labels */}
+              {xTicks.map(t => (
+                <text key={t.label} x={pts[t.i].x} y={408} textAnchor={t.anchor} fontSize="15" fontWeight="600" fill="#94A3B8">{t.label}</text>
+              ))}
+
+              {/* area fill — reveals left to right */}
+              <g style={{
+                clipPath: isInView ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+                opacity: isInView ? 1 : 0,
+                transition: 'clip-path 2.4s ease-out, opacity 1.2s ease-out 0.3s',
+              }}>
+                <path d={area} fill="url(#gcArea)" />
+              </g>
+
+              {/* line — draws itself */}
+              <path
+                d={line}
+                fill="none"
+                stroke="url(#gcLine)"
+                strokeWidth="5"
+                strokeLinecap="round"
+                pathLength={1}
+                strokeDasharray="1"
+                strokeDashoffset={isInView ? 0 : 1}
+                style={{ transition: 'stroke-dashoffset 2.4s ease-out' }}
+              />
+
+              {/* milestone dots */}
+              {[5, 8].map(i => (
+                <g key={i} style={{ opacity: isInView ? 1 : 0, transition: `opacity 0.5s ease-out ${0.9 + i * 0.09}s` }}>
+                  <circle cx={pts[i].x} cy={pts[i].y} r="6.5" fill="#fff" stroke={i === 5 ? '#E91E8C' : '#0EA5E9'} strokeWidth="3.5" />
+                  <text x={pts[i].x} y={pts[i].y - 16} textAnchor="middle" fontSize="16" fontWeight="700" fill={i === 5 ? '#E91E8C' : '#0284C7'}>
+                    +{(GROWTH_VALUES[i] / 1000).toFixed(1).replace('.', ',')}K
+                  </text>
+                </g>
+              ))}
+
+              {/* start dot */}
+              <circle cx={pts[0].x} cy={pts[0].y} r="5" fill="#CBD5E1" stroke="#fff" strokeWidth="2.5" />
+
+              {/* peak dot with pulse */}
+              <g style={{ opacity: isInView ? 1 : 0, transition: 'opacity 0.5s ease-out 2.2s' }}>
+                <circle cx={X1} cy={pts[11].y} r="16" fill="#E91E8C" opacity="0.35" className="animate-ping" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+                <circle cx={X1} cy={pts[11].y} r="8" fill="#E91E8C" stroke="#fff" strokeWidth="3.5" />
+              </g>
+            </svg>
+
+            {/* peak chip — 10K+++ */}
+            <div className="absolute pointer-events-none" style={{ left: '96.3%', top: '17%', transform: 'translate(-90%, -130%)' }}>
+              <div className="gradient-animated text-white text-xs sm:text-sm font-display font-bold px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg shadow-pink-300/50 whitespace-nowrap">
+                10K+++ 🚀
+              </div>
+            </div>
+
+            {/* before-order chip */}
+            <div className="absolute pointer-events-none hidden sm:block" style={{ left: '9%', top: '48%' }}>
+              <span className="glass border border-sky-200/80 text-sky-600 text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm">
+                😴 Sebelum order
+              </span>
+            </div>
+          </div>
+
+          <p className="text-center text-[11px] sm:text-xs text-muted-foreground/70 mt-4">
+            *Ilustrasi pertumbuhan rata-rata sponsor aktif — hasil kamu bisa lebih cepat! 💫
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ============================================================
    HERO DASHBOARD MOCKUP — marketing analytics card
    ============================================================ */
 
@@ -621,7 +819,7 @@ export default function Home() {
                   </span>
                   <br />
                   <span className="text-[0.62em] sm:text-[0.65em]">Dapatkan </span>
-                  <span className="text-[0.62em] sm:text-[0.65em] gradient-text font-bold">10K++ Folls</span>
+                  <span className="text-[0.62em] sm:text-[0.65em] gradient-text font-bold">10K+++ Folls</span>
                   <span className="text-[0.62em] sm:text-[0.65em]"> Real Indo + Aktif 💞</span>
                 </h1>
 
@@ -663,6 +861,9 @@ export default function Home() {
 
         {/* ===== MARQUEE STRIP ===== */}
         <MarqueeStrip />
+
+        {/* ===== FULL-WIDTH GROWTH CHART ===== */}
+        <GrowthChart />
 
         {/* ===== KPI STATS ===== */}
         <section className="py-14 sm:py-16 relative">

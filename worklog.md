@@ -72,3 +72,23 @@ Stage Summary:
 - Poster kini sekat landscape 19:6 antara section Tentang dan Price List, wajah terlihat
 - Dashboard mockup tidak lagi menampilkan poster kecil
 - Hero: "Dapatkan 10K++ Folls Real Indo + Aktif"
+
+---
+Task ID: growth-chart-poster-v2
+Agent: Main Agent (Super Z)
+Task: Grafik pertumbuhan follower full-width di bawah marquee + ganti poster dengan crop user
+
+Work Log:
+- User upload poster hasil crop sendiri (511x437) ke upload/hero-image.png; wajah terdeteksi x[342,393] y[99,150] center (367,124)
+- scripts/crop_divider_v2.py: public/hero-image.png diganti file user; sekat 19:6 regenerasi (crop 511x161 top=68, wajah 35% dari atas, upscale 3x -> 1533x483)
+- Komponen GrowthChart (page.tsx): SVG viewBox 1200x420, data 12 minggu 120->10.000 folls, kurva smooth Catmull-Rom->Bezier, gradient line pink->sky, area gradient
+- Animasi saat in-view: garis tergambar (stroke-dashoffset pathLength), area reveal kiri->kanan (clip-path), milestone dots +2,8K (W6) & +6,6K (W9), peak dot pulsing + chip gradient "10K+++ 🚀", chip "😴 Sebelum order"
+- Counter angka naik 0->10.000 (format id-ID) di kartu glass "TOTAL FOLLS MASUK"
+- Section full-width (w-full, px-4/sm:px-8, tanpa max-w) ditempatkan tepat di bawah <MarqueeStrip />, sebelum KPI stats
+- Hero konsisten: "10K++ Folls" -> "10K+++ Folls"
+- Build sukses, deploy --prod, verifikasi: site 200, semua elemen chart ada, poster-divider.jpg ter-serve (189KB, ukuran baru)
+
+Stage Summary:
+- Live di https://vibely-space.vercel.app
+- Grafik pertumbuhan full-width memukau di bawah marquee MURAH✦CEPAT✦TERPERCAYA✦...
+- Poster = crop milik user, sekat 19:6 wajah tetap terlihat
