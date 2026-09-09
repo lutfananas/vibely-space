@@ -133,7 +133,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
    GROWTH CHART — full-width dramatic follower growth proof
    ============================================================ */
 
-const GROWTH_VALUES = [120, 350, 700, 1200, 1900, 2800, 3900, 5200, 6600, 8000, 9200, 10000]
+const GROWTH_VALUES = [0, 300, 1000, 5000, 10000]
 
 function smoothPath(pts: { x: number; y: number }[]) {
   let d = `M${pts[0].x},${pts[0].y}`
@@ -185,11 +185,11 @@ function GrowthChart() {
     { v: 10000, label: '10K' },
   ]
   const xTicks = [
-    { i: 0, label: 'W1', anchor: 'start' },
-    { i: 2, label: 'W3', anchor: 'middle' },
-    { i: 5, label: 'W6', anchor: 'middle' },
-    { i: 8, label: 'W9', anchor: 'middle' },
-    { i: 11, label: 'W12', anchor: 'end' },
+    { i: 0, label: '0 Jam', anchor: 'start' },
+    { i: 1, label: '12 Jam', anchor: 'middle' },
+    { i: 2, label: 'Hari 1', anchor: 'middle' },
+    { i: 3, label: 'Hari 2', anchor: 'middle' },
+    { i: 4, label: 'Hari 3', anchor: 'end' },
   ]
 
   return (
@@ -207,11 +207,11 @@ function GrowthChart() {
               Live Growth — Setelah Order
             </span>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold text-foreground leading-tight mt-5">
-              Followers <span className="gradient-text">Naik Drastis</span> Sampai 10K+++ 🚀
+              Followers <span className="gradient-text">Naik Drastis</span> dalam 1–3 Hari! 🚀
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg mt-3 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Ini dia buktinya! Begitu jadi Sponsor Giveaway VIBELY SPACE, followers kamu mengalir
-              deras minggu demi minggu sampai tembus 10K+++.
+              Ini dia buktinya! Begitu jadi Sponsor Giveaway VIBELY SPACE, followers mulai mengalir
+              dari 0–12 jam dan tembus 10K+++ di hari ke-3!
             </p>
           </div>
           <div className="glass rounded-3xl border border-pink-200/80 shadow-cute px-7 py-5 text-center shrink-0 mx-auto lg:mx-0">
@@ -225,7 +225,7 @@ function GrowthChart() {
         {/* chart card */}
         <div className="relative bg-white/90 rounded-[2rem] border border-pink-100 shadow-cute-lg p-3 sm:p-6 lg:p-8">
           <div className="relative">
-            <svg viewBox="0 0 1200 420" className="w-full h-auto block" role="img" aria-label="Grafik pertumbuhan followers naik drastis sampai 10K+++ setelah order paket">
+            <svg viewBox="0 0 1200 420" className="w-full h-auto block" role="img" aria-label="Grafik pertumbuhan followers naik drastis sampai 10K+++ dalam 1–3 hari setelah order paket">
               <defs>
                 <linearGradient id="gcLine" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#F472B6" />
@@ -284,11 +284,11 @@ function GrowthChart() {
               />
 
               {/* milestone dots */}
-              {[5, 8].map(i => (
-                <g key={i} style={{ opacity: isInView ? 1 : 0, transition: `opacity 0.5s ease-out ${0.9 + i * 0.09}s` }}>
-                  <circle cx={pts[i].x} cy={pts[i].y} r="6.5" fill="#fff" stroke={i === 5 ? '#E91E8C' : '#0EA5E9'} strokeWidth="3.5" />
-                  <text x={pts[i].x} y={pts[i].y - 16} textAnchor="middle" fontSize="16" fontWeight="700" fill={i === 5 ? '#E91E8C' : '#0284C7'}>
-                    +{(GROWTH_VALUES[i] / 1000).toFixed(1).replace('.', ',')}K
+              {[1, 2, 3].map(i => (
+                <g key={i} style={{ opacity: isInView ? 1 : 0, transition: `opacity 0.5s ease-out ${0.5 + i * 0.3}s` }}>
+                  <circle cx={pts[i].x} cy={pts[i].y} r="6.5" fill="#fff" stroke={i % 2 === 1 ? '#E91E8C' : '#0EA5E9'} strokeWidth="3.5" />
+                  <text x={pts[i].x} y={pts[i].y - 16} textAnchor="middle" fontSize="16" fontWeight="700" fill={i % 2 === 1 ? '#E91E8C' : '#0284C7'}>
+                    +{GROWTH_VALUES[i].toLocaleString('id-ID')}
                   </text>
                 </g>
               ))}
@@ -298,8 +298,8 @@ function GrowthChart() {
 
               {/* peak dot with pulse */}
               <g style={{ opacity: isInView ? 1 : 0, transition: 'opacity 0.5s ease-out 2.2s' }}>
-                <circle cx={X1} cy={pts[11].y} r="16" fill="#E91E8C" opacity="0.35" className="animate-ping" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
-                <circle cx={X1} cy={pts[11].y} r="8" fill="#E91E8C" stroke="#fff" strokeWidth="3.5" />
+                <circle cx={X1} cy={pts[4].y} r="16" fill="#E91E8C" opacity="0.35" className="animate-ping" style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+                <circle cx={X1} cy={pts[4].y} r="8" fill="#E91E8C" stroke="#fff" strokeWidth="3.5" />
               </g>
             </svg>
 
@@ -319,9 +319,103 @@ function GrowthChart() {
           </div>
 
           <p className="text-center text-[11px] sm:text-xs text-muted-foreground/70 mt-4">
-            *Ilustrasi pertumbuhan rata-rata sponsor aktif — hasil kamu bisa lebih cepat! 💫
+            *Ilustrasi kecepatan rata-rata sponsor aktif — folls mulai masuk 0–12 jam, target 10K+++ tercapai 1–3 hari! 💫
           </p>
         </div>
+      </div>
+    </section>
+  )
+}
+
+/* ============================================================
+   FAST GROWTH STATS — eye-catching 1-3 day result numbers
+   ============================================================ */
+
+const FAST_STATS = [
+  { chip: '⏱️ 0–12 JAM', target: 300, label: 'Folls pertama masuk', bar: 16, tone: 'pink' },
+  { chip: '🌅 HARI 1', target: 1000, label: 'Folls makin rame', bar: 38, tone: 'blue' },
+  { chip: '🌇 HARI 2', target: 5000, label: 'Aliran makin deras', bar: 66, tone: 'pink' },
+  { chip: '🚀 HARI 3', target: 10000, label: 'Tembus 10K+++', bar: 100, tone: 'blue' },
+] as const
+
+function FastGrowthStats() {
+  const { ref, isInView } = useInView(0.25)
+  const [counts, setCounts] = useState([0, 0, 0, 0])
+
+  useEffect(() => {
+    if (!isInView) return
+    let raf = 0
+    const t0 = performance.now()
+    const duration = 2100
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / duration)
+      setCounts(FAST_STATS.map((s, i) => {
+        const local = Math.min(1, Math.max(0, p * 1.45 - i * 0.15))
+        return Math.round(s.target * (1 - Math.pow(1 - local, 3)))
+      }))
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [isInView])
+
+  return (
+    <section className="py-10 sm:py-14 relative overflow-hidden">
+      <div className="relative max-w-6xl mx-auto px-4">
+        <Reveal>
+          <SectionHeader
+            badge="⚡ Hasil Kilat"
+            title={<>Folls Masuk Cuma <span className="gradient-text">1–3 Hari</span>!</>}
+            subtitle="Nggak perlu nunggu lama — begitu order, followers langsung mengalir masuk!"
+          />
+        </Reveal>
+
+        <div ref={ref} className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {FAST_STATS.map((s, i) => (
+            <div
+              key={i}
+              className={`relative bg-white rounded-[1.75rem] border shadow-cute p-5 sm:p-6 text-center hover:-translate-y-1.5 hover:shadow-cute-lg transition-all duration-300 overflow-hidden ${
+                s.tone === 'blue' ? 'border-sky-100' : 'border-pink-100'
+              }`}
+            >
+              <span className="absolute -right-3 -top-3 text-5xl opacity-10">{['⚡', '🌤️', '🌊', '🚀'][i]}</span>
+              <span className={`inline-block text-[10px] sm:text-[11px] font-bold tracking-widest px-3 py-1.5 rounded-full border mb-4 ${
+                s.tone === 'blue' ? 'bg-sky-50 text-sky-600 border-sky-100' : 'bg-pink-50 text-primary border-pink-100'
+              }`}>
+                {s.chip}
+              </span>
+              <p className="font-display text-3xl sm:text-[2.5rem] font-bold gradient-text leading-none">
+                +{counts[i].toLocaleString('id-ID')}
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground font-semibold mt-2">{s.label}</p>
+
+              {/* mini growth bar */}
+              <div className="h-20 sm:h-24 mt-4 mx-auto w-12 sm:w-14 rounded-full bg-gradient-to-b from-pink-50 to-sky-50 border border-pink-100/70 flex items-end justify-center overflow-hidden">
+                <div
+                  className={`w-6 sm:w-8 rounded-full ${s.tone === 'blue' ? 'bg-gradient-to-t from-sky-500 to-sky-300' : 'bg-gradient-to-t from-primary to-pink-300'}`}
+                  style={{
+                    height: isInView ? `${s.bar}%` : '0%',
+                    transition: `height 1.3s cubic-bezier(0.22, 1, 0.36, 1) ${0.15 + i * 0.2}s`,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Reveal delay={350}>
+          <div className="text-center mt-9 sm:mt-12">
+            <a
+              href="#pricelist"
+              className="inline-flex gradient-animated text-white font-display font-bold text-base sm:text-lg px-9 py-4 rounded-full shadow-cute hover:shadow-cute-lg hover:scale-105 active:scale-95 transition-all"
+            >
+              🔥 Gas Order Sekarang!
+            </a>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-3.5">
+              Slot sponsor terbatas — jangan sampai kehabisan ✦
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
@@ -332,7 +426,6 @@ function GrowthChart() {
    ============================================================ */
 
 function DashboardMock() {
-  const bars = [30, 40, 36, 50, 46, 60, 55, 70, 66, 80, 90, 100]
   return (
     <div className="relative animate-float">
       <div className="absolute -inset-6 bg-gradient-to-br from-pink-200/60 via-transparent to-sky-200/60 rounded-[2.5rem] blur-2xl opacity-60" />
@@ -371,28 +464,17 @@ function DashboardMock() {
             </div>
           </div>
 
-          {/* Chart */}
-          <div className="rounded-2xl border border-pink-100 p-4 mb-4 bg-gradient-to-b from-sky-50/40 to-pink-50/40">
-            <div className="flex items-center justify-between mb-3 gap-2">
-              <p className="text-xs font-bold text-foreground/80">Pertumbuhan Followers 📈</p>
-              <span className="text-[10px] font-bold text-sky-600 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-full whitespace-nowrap">12 MINGGU</span>
-            </div>
-            <div className="flex items-end gap-1.5 h-24 sm:h-28">
-              {bars.map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-t-md transition-all duration-300 hover:opacity-70"
-                  style={{
-                    height: `${h}%`,
-                    background: i === bars.length - 1
-                      ? 'linear-gradient(180deg, #E91E8C, #0EA5E9)'
-                      : i % 2 === 0 ? '#F9A8D4' : '#BAE6FD',
-                  }}
-                />
-              ))}
-            </div>
-            <div className="flex justify-between mt-2 text-[9px] font-semibold text-muted-foreground/70">
-              <span>W1</span><span>W4</span><span>W8</span><span>W12</span>
+          {/* Poster giveaway preview */}
+          <div className="rounded-2xl border border-pink-100 p-2.5 mb-4 bg-gradient-to-b from-sky-50/40 to-pink-50/40">
+            <div className="relative rounded-xl overflow-hidden">
+              <img
+                src="/hero-image.png"
+                alt="Poster Giveaway VIBELY SPACE"
+                className="w-full h-48 sm:h-56 object-cover object-top"
+              />
+              <span className="absolute top-2.5 left-2.5 glass text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-primary border border-pink-200/80 px-2.5 py-1 rounded-full">
+                📷 Poster Giveaway
+              </span>
             </div>
           </div>
 
@@ -973,24 +1055,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== POSTER DIVIDER — landscape 19:6 ===== */}
-        <section className="py-8 sm:py-12 relative">
-          <div className="max-w-6xl mx-auto px-4">
-            <Reveal>
-              <div className="relative group rounded-[2.5rem] overflow-hidden border-4 border-white shadow-cute-lg">
-                <img
-                  src="/poster-divider.jpg"
-                  alt="Poster Giveaway VIBELY SPACE"
-                  className="w-full aspect-[19/6] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none" />
-                <span className="absolute top-4 left-4 sm:top-5 sm:left-5 glass text-[10px] sm:text-xs font-bold uppercase tracking-widest text-primary border border-pink-200/80 px-4 py-2 rounded-full shadow-sm">
-                  📷 Poster Giveaway ✨
-                </span>
-              </div>
-            </Reveal>
-          </div>
-        </section>
+        {/* ===== FAST GROWTH STATS — eye-catching 1-3 day numbers ===== */}
+        <FastGrowthStats />
 
         {/* ===== PRICE LIST ===== */}
         <section id="pricelist" className="py-16 sm:py-24 relative overflow-hidden">

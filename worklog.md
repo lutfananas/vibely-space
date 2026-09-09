@@ -92,3 +92,21 @@ Stage Summary:
 - Live di https://vibely-space.vercel.app
 - Grafik pertumbuhan full-width memukau di bawah marquee MURAH✦CEPAT✦TERPERCAYA✦...
 - Poster = crop milik user, sekat 19:6 wajah tetap terlihat
+
+---
+Task ID: swap-chart-poster
+Agent: Main Agent (Super Z)
+Task: Tukar posisi grafik & poster + ubah estimasi mingguan jadi 0 Jam - Hari 3
+
+Work Log:
+- Sekat poster landscape (poster-divider.jpg) dihapus, diganti komponen FastGrowthStats: 4 kartu statistik eye-catching (⏱️ 0-12 JAM +300 / 🌅 HARI 1 +1.000 / 🌇 HARI 2 +5.000 / 🚀 HARI 3 +10.000), angka count-up saat in-view, mini bar chart animasi, CTA gradient "🔥 Gas Order Sekarang!" -> #pricelist, badge "⚡ Hasil Kilat"
+- DashboardMock: blok grafik "Pertumbuhan Followers 📈 / 12 MINGGU" dihapus, diganti preview poster baru user (/hero-image.png, h-48/56 object-top, badge glass "📷 Poster Giveaway")
+- GrowthChart full-width: data 12 titik mingguan -> 5 titik [0, 300, 1000, 5000, 10000], label sumbu W1-W12 -> "0 Jam / 12 Jam / Hari 1 / Hari 2 / Hari 3", milestone +300/+1.000/+5.000, copy judul "Naik Drastis dalam 1–3 Hari!", footnote estimasi 0-12 jam s/d 1-3 hari
+- public/poster-divider.jpg dihapus (404), tmp_view dibersihkan
+- Grep verifikasi: tidak ada sisa referensi MINGGU/W1/W12/poster-divider/bars
+- Build sukses, deploy --prod, verifikasi produksi: site 200, semua label baru ada, hero-image.png di dashboard, poster-divider 404
+
+Stage Summary:
+- Live di https://vibely-space.vercel.app
+- Struktur: Hero(dashboard+poster) -> Marquee -> GrowthChart(0 Jam-Hari 3) -> KPI -> About -> FastGrowthStats(CTA daftar) -> Price List -> Order -> Contact
+- Estimasi konsisten 1-3 hari di seluruh halaman, tidak ada lagi 12 minggu
