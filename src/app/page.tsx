@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useEffect, useRef, createContext, useContext, type PointerEvent as ReactPointerEvent } from 'react'
+import { ChevronLeft, ChevronRight, X, MessageCircle, Check, CalendarDays } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -46,9 +46,9 @@ function FloatingStickers() {
 }
 
 /* ============================================================
-   WHATSAPP HELPERS — direct order dengan pesan pre-filled
-   (adaptasi dari 2.0: user tidak perlu mengetik ulang,
-    admin verifikasi & kirim nomor rekening via WA)
+   WHATSAPP HELPERS — adaptasi flow order dari 2.0:
+   klik paket -> modal -> isi data -> review -> WA (TANPA
+   pemilihan bank/pembayaran; admin kirim rekening via WA)
    ============================================================ */
 
 const WA_NUMBER = '6285694106233'
@@ -57,21 +57,19 @@ const waGeneralLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
   'Halo VIBELY SPACE ✦ Saya mau tanya soal Sponsor Giveaway 😊'
 )}`
 
-function waOrderLink(p: { price: string; jaminan: string; keepHari: string; gain: string }) {
-  const lines = [
-    'Halo VIBELY SPACE ✦',
-    '',
-    'Saya mau order Sponsor Giveaway dengan paket:',
-    '',
-    `📦 Paket: ${p.price}`,
-    `📍 Jaminan: ${p.jaminan} followers`,
-    `🌷 Keep hari: ${p.keepHari}`,
-    `🤩 Estimasi gain: ${p.gain} folls`,
-    '',
-    'Mohon info langkah selanjutnya & nomor rekening untuk pembayaran. Terima kasih 🙏',
-  ]
-  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`
-}
+const PACKAGES = [
+  { id: 'PKG-02', poster: '2️⃣', price: 'Rp15.000', jaminan: '200', keepHari: 'Menyesuaikan', gain: '200-300+', popular: false },
+  { id: 'PKG-03', poster: '3️⃣', price: 'Rp28.000', jaminan: '500', keepHari: 'Menyesuaikan', gain: '500-750+', popular: false },
+  { id: 'PKG-04', poster: '4️⃣', price: 'Rp42.000', jaminan: '1.000', keepHari: '1-5', gain: '1k-1,5k+', popular: false },
+  { id: 'PKG-05', poster: '5️⃣', price: 'Rp62.000', jaminan: '2.000', keepHari: '1-6', gain: '2k-2,5k+', popular: true },
+  { id: 'PKG-06', poster: '6️⃣', price: 'Rp115.000', jaminan: '5.000', keepHari: '3-6', gain: '5k-8k+', popular: false },
+  { id: 'PKG-07', poster: '7️⃣', price: 'Rp185.000', jaminan: '10.000', keepHari: '5-10', gain: '10k-11k+', popular: false },
+] as const
+
+type OrderPkg = (typeof PACKAGES)[number]
+
+// Context agar komponen mana pun bisa membuka modal order
+const OrderCtx = createContext<(pkgId?: string) => void>(() => {})
 
 // Scrolling marquee strip — pink→blue gradient
 function MarqueeStrip() {
@@ -539,22 +537,14 @@ function DashboardMock() {
    ============================================================ */
 
 function PriceCard({
-  poster,
-  price,
-  jaminan,
-  keepHari,
-  gain,
+  pkg,
   delay,
-  popular = false,
 }: {
-  poster: string
-  price: string
-  jaminan: string
-  keepHari: string
-  gain: string
+  pkg: OrderPkg
   delay: number
-  popular?: boolean
 }) {
+  const { poster, price, jaminan, keepHari, gain, popular, id } = pkg
+  const openOrder = useContext(OrderCtx)
   return (
     <Reveal delay={delay} className="h-full">
       <div className="relative h-full pt-8">
@@ -605,7 +595,7 @@ function PriceCard({
                 }`}>
                   {poster}
                 </div>
-                <span className="text-[9px] font-bold text-muted-foreground/60 bg-muted px-2 py-1 rounded-md font-mono">PKG-0{poster.replace(/\D/g, '')}</span>
+                <span className="text-[9px] font-bold text-muted-foreground/60 bg-muted px-2 py-1 rounded-md font-mono">{id}</span>
               </div>
             </div>
 
@@ -633,26 +623,386 @@ function PriceCard({
               ))}
             </div>
 
-            {/* CTA — langsung ke WA dengan pesan pre-filled sesuai paket ini */}
-            <a
-              href={waOrderLink({ price, jaminan, keepHari, gain })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`mt-6 block text-center font-bold text-sm py-3 rounded-full transition-all duration-300 ${
+            {/* CTA — buka modal order (flow 2.0: isi data -> review -> WA, tanpa pilih bank) */}
+            <button
+              onClick={() => openOrder(id)}
+              className={`mt-6 block w-full text-center font-bold text-sm py-3 rounded-full transition-all duration-300 ${
                 popular
                   ? 'gradient-animated text-white shadow-lg shadow-pink-300/50 hover:shadow-xl hover:scale-[1.03]'
                   : 'bg-gradient-to-r from-pink-50 to-sky-50 text-primary border border-pink-200 hover:gradient-animated hover:text-white hover:border-transparent hover:scale-[1.03]'
               }`}
             >
               Order Paket Ini →
-            </a>
+            </button>
             <p className="text-center text-[10px] text-muted-foreground/70 mt-2">
-              detail paket otomatis terisi di WhatsApp ✦
+              isi form singkat, langsung lanjut ke WhatsApp ✦
             </p>
           </CardContent>
         </Card>
       </div>
     </Reveal>
+  )
+}
+
+/* ============================================================
+   ORDER MODAL — adaptasi flow order dari 2.0 (tanpa pemilihan
+   bank/pembayaran): Paket -> Isi Data -> Review -> WhatsApp.
+   Admin menerima pesanan via WA lalu balas nomor rekening.
+   ============================================================ */
+
+const ORDER_STEPS = ['Paket', 'Isi Data', 'Kirim'] as const
+
+function OrderModal({
+  open,
+  pkgId,
+  onOpenChange,
+}: {
+  open: boolean
+  pkgId: string | null
+  onOpenChange: (v: boolean) => void
+}) {
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  const [selected, setSelected] = useState<string | null>(null)
+  const [username, setUsername] = useState('')
+  const [campaign, setCampaign] = useState('')
+  const [startDate, setStartDate] = useState('')
+  const [touched, setTouched] = useState(false)
+
+  const close = () => onOpenChange(false)
+
+  // Reset setiap kali modal dibuka
+  useEffect(() => {
+    if (open) {
+      setSelected(pkgId ?? null)
+      setStep(1)
+      setUsername('')
+      setCampaign('')
+      setTouched(false)
+      const today = new Date().toISOString().slice(0, 10)
+      setStartDate(today)
+    }
+  }, [open, pkgId])
+
+  // Body scroll lock + ESC untuk menutup
+  useEffect(() => {
+    if (!open) return
+    document.body.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  if (!open) return null
+
+  const pkg = PACKAGES.find(p => p.id === selected) ?? null
+  const cleanHandle = username.trim().replace(/^@/, '')
+  const usernameValid = cleanHandle.length > 0
+  const campaignDisplay = campaign.trim() || 'Sponsor Giveaway'
+  const startDisplay = startDate
+    ? new Date(startDate + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+    : 'Segera'
+
+  const buildWaMessage = () => {
+    if (!pkg) return ''
+    const lines = [
+      'Halo VIBELY SPACE ✦',
+      '',
+      'Saya ingin order Sponsor Giveaway dengan detail berikut:',
+      '',
+      `📦 Paket: ${pkg.id} — ${pkg.price}`,
+      `📍 Jaminan: ${pkg.jaminan} followers`,
+      `🌷 Keep hari: ${pkg.keepHari}`,
+      `🤩 Estimasi gain: ${pkg.gain} folls`,
+      `📱 Instagram: @${cleanHandle}`,
+      `📣 Campaign: ${campaignDisplay}`,
+      `📅 Mulai: ${startDisplay}`,
+      '',
+      'Mohon verifikasi pesanan & kirim nomor rekening untuk pembayaran. Terima kasih 🙏',
+    ]
+    return lines.join('\n')
+  }
+
+  const waLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildWaMessage())}`
+
+  const sendToWhatsApp = () => {
+    window.open(waLink, '_blank', 'noopener,noreferrer')
+    setStep(4)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-[#3D1A2B]/40 animate-fade-in sm:p-4"
+      onClick={close}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        className="relative bg-white w-full sm:max-w-md rounded-t-[2rem] sm:rounded-[2rem] border border-pink-100 shadow-cute-lg animate-pop-in max-h-[92vh] flex flex-col overflow-hidden"
+      >
+        {/* soft glow */}
+        <div
+          className="absolute -top-24 -right-24 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.25) 0%, rgba(244,114,182,0) 70%)' }}
+        />
+
+        {/* Header */}
+        <div className="relative flex items-center gap-2.5 px-5 pt-5 pb-3 border-b border-pink-100/80">
+          {step > 1 && step < 4 ? (
+            <button
+              onClick={() => setStep((step - 1) as 1 | 2)}
+              aria-label="Kembali"
+              className="w-8 h-8 rounded-full bg-pink-50 text-primary flex items-center justify-center hover:bg-pink-100 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          ) : (
+            <span className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-100 to-sky-100 flex items-center justify-center text-sm">🎀</span>
+          )}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-display font-semibold text-foreground text-base leading-tight truncate">
+              Order Sponsor Giveaway
+            </h3>
+            <div className="flex items-center gap-1.5 mt-1">
+              {ORDER_STEPS.map((label, i) => {
+                const n = i + 1
+                const done = step > n
+                const active = step === n
+                return (
+                  <div key={label} className="flex items-center gap-1.5">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                      active ? 'bg-primary text-white' : done ? 'bg-emerald-50 text-emerald-600' : 'bg-muted text-muted-foreground/70'
+                    }`}>
+                      {done ? '✓' : n} {label}
+                    </span>
+                    {n < ORDER_STEPS.length && <span className="text-pink-200 text-[9px]">›</span>}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+          <button
+            onClick={close}
+            aria-label="Tutup"
+            className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center hover:bg-pink-100 hover:text-primary transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="relative flex-1 overflow-y-auto px-5 py-5">
+          {/* ===== STEP 1: Pilih Paket ===== */}
+          {step === 1 && (
+            <div className="animate-pop-in">
+              <p className="text-sm text-muted-foreground mb-4">Pilih paket yang kamu mau 👇</p>
+              <div className="grid grid-cols-2 gap-3">
+                {PACKAGES.map(p => {
+                  const isSel = selected === p.id
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setSelected(p.id)}
+                      className={`relative text-left rounded-2xl border-2 p-3.5 transition-all duration-200 hover:-translate-y-0.5 ${
+                        isSel
+                          ? 'border-primary bg-gradient-to-br from-pink-50 to-white ring-4 ring-pink-100 shadow-cute'
+                          : 'border-pink-100 bg-white hover:border-sky-200'
+                      }`}
+                    >
+                      {p.popular && (
+                        <span className="absolute -top-2 right-2 text-[8px] font-bold gradient-animated text-white px-1.5 py-0.5 rounded-full">⭐ LARIS</span>
+                      )}
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-lg">{p.poster}</span>
+                        <span className="text-[9px] font-bold text-muted-foreground/60 bg-muted px-1.5 py-0.5 rounded font-mono">{p.id}</span>
+                      </div>
+                      <p className={`font-display font-bold text-lg leading-none mb-1.5 ${isSel ? 'gradient-text' : 'text-primary'}`}>{p.price}</p>
+                      <p className="text-[10px] text-muted-foreground leading-snug">📍 Jaminan {p.jaminan} folls</p>
+                      <p className="text-[10px] text-muted-foreground leading-snug">🤩 Gain {p.gain}</p>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ===== STEP 2: Isi Data ===== */}
+          {step === 2 && pkg && (
+            <div className="animate-pop-in space-y-4">
+              <div className="rounded-2xl bg-gradient-to-r from-pink-50 to-sky-50 border border-pink-100 px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">{pkg.poster}</span>
+                  <div>
+                    <p className="text-xs font-bold text-foreground">{pkg.id} · Jaminan {pkg.jaminan} folls</p>
+                    <p className="text-[10px] text-muted-foreground">Keep {pkg.keepHari} hari · Gain {pkg.gain}</p>
+                  </div>
+                </div>
+                <p className="font-display font-bold gradient-text">{pkg.price}</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-foreground mb-1.5">
+                  Username Instagram <span className="text-primary">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
+                  <input
+                    autoFocus
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    placeholder="usernamekamu"
+                    className={`w-full pl-8 pr-4 py-3 rounded-2xl border-2 bg-white text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-primary ${
+                      touched && !usernameValid ? 'border-red-300' : 'border-pink-100'
+                    }`}
+                  />
+                </div>
+                {touched && !usernameValid && (
+                  <p className="text-[11px] text-red-500 mt-1.5">Isi username Instagram kamu dulu ya 🥺</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-foreground mb-1.5">Nama Campaign</label>
+                <input
+                  value={campaign}
+                  onChange={e => setCampaign(e.target.value)}
+                  placeholder="Opsional — contoh: Giveaway Akhir Bulan"
+                  className="w-full px-4 py-3 rounded-2xl border-2 border-pink-100 bg-white text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-foreground mb-1.5">Rencana Mulai</label>
+                <div className="relative">
+                  <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 rounded-2xl border-2 border-pink-100 bg-white text-sm text-foreground outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ===== STEP 3: Review ===== */}
+          {step === 3 && pkg && (
+            <div className="animate-pop-in space-y-4">
+              <div className="rounded-2xl border border-pink-100 overflow-hidden">
+                {[
+                  ['📦 Paket', `${pkg.id} — ${pkg.price}`],
+                  ['📍 Jaminan', `${pkg.jaminan} followers`],
+                  ['🌷 Keep hari', pkg.keepHari],
+                  ['🤩 Estimasi gain', `${pkg.gain} folls`],
+                  ['📱 Instagram', `@${cleanHandle}`],
+                  ['📣 Campaign', campaignDisplay],
+                  ['📅 Mulai', startDisplay],
+                ].map(([k, v], i) => (
+                  <div key={i} className={`flex items-center justify-between gap-3 px-4 py-2.5 text-sm ${i % 2 ? 'bg-white' : 'bg-pink-50/50'}`}>
+                    <span className="text-muted-foreground text-xs font-medium">{k}</span>
+                    <span className="font-semibold text-foreground text-right">{v}</span>
+                  </div>
+                ))}
+                <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-pink-100/80 to-sky-100/80">
+                  <span className="text-xs font-bold text-foreground">💰 Total</span>
+                  <span className="font-display font-bold text-primary">{pkg.price}</span>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-3.5 flex gap-3">
+                <MessageCircle className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                <p className="text-xs text-emerald-700 leading-relaxed">
+                  <span className="font-bold">Lanjut via WhatsApp</span> — WhatsApp akan terbuka dengan semua detail pesanan kamu sudah terisi otomatis. Kamu tinggal klik kirim, admin akan verifikasi & kirim nomor rekening ✦
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ===== STEP 4: Sukses ===== */}
+          {step === 4 && pkg && (
+            <div className="animate-pop-in text-center py-2">
+              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
+                <Check className="w-8 h-8 text-emerald-500" />
+              </div>
+              <h4 className="font-display text-xl font-semibold text-foreground mb-1.5">Pesanan Anda Siap Dikirim</h4>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> WhatsApp Terbuka
+              </span>
+              <div className="rounded-2xl bg-pink-50/60 border border-pink-100 px-4 py-3 text-left space-y-1 mb-5">
+                <p className="text-xs text-foreground/80"><span className="font-bold">{pkg.id}</span> · {pkg.price} · Jaminan {pkg.jaminan} folls</p>
+                <p className="text-xs text-foreground/80">@{cleanHandle} · mulai {startDisplay}</p>
+              </div>
+              <div className="flex flex-col gap-2.5">
+                <button
+                  onClick={() => window.open(waLink, '_blank', 'noopener,noreferrer')}
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white font-bold text-sm py-3.5 rounded-full shadow-lg shadow-emerald-200 hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  <MessageCircle className="w-4 h-4" /> Buka WhatsApp Lagi
+                </button>
+                <button
+                  onClick={close}
+                  className="w-full text-sm font-bold text-primary bg-gradient-to-r from-pink-50 to-sky-50 border border-pink-200 py-3 rounded-full hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  Selesai
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        {step < 4 && (
+          <div className="relative px-5 py-4 border-t border-pink-100/80 bg-white">
+            {step === 1 && (
+              <button
+                onClick={() => pkg && setStep(2)}
+                disabled={!pkg}
+                className="w-full gradient-animated text-white font-bold text-sm py-3.5 rounded-full shadow-cute hover:shadow-cute-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+              >
+                Lanjut Isi Data →
+              </button>
+            )}
+            {step === 2 && (
+              <div className="flex gap-2.5">
+                <button
+                  onClick={() => setStep(1)}
+                  className="px-5 text-sm font-bold text-muted-foreground bg-muted rounded-full hover:bg-pink-100 hover:text-primary transition-colors"
+                >
+                  ← Kembali
+                </button>
+                <button
+                  onClick={() => {
+                    setTouched(true)
+                    if (usernameValid) setStep(3)
+                  }}
+                  className="flex-1 gradient-animated text-white font-bold text-sm py-3.5 rounded-full shadow-cute hover:shadow-cute-lg hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  Lihat Review →
+                </button>
+              </div>
+            )}
+            {step === 3 && (
+              <div className="flex gap-2.5">
+                <button
+                  onClick={() => setStep(2)}
+                  className="px-5 text-sm font-bold text-muted-foreground bg-muted rounded-full hover:bg-pink-100 hover:text-primary transition-colors"
+                >
+                  ← Kembali
+                </button>
+                <button
+                  onClick={sendToWhatsApp}
+                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-500 text-white font-bold text-sm py-3.5 rounded-full shadow-lg shadow-emerald-200/70 hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  <MessageCircle className="w-4 h-4" /> Kirim via WhatsApp
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -1196,6 +1546,13 @@ function AccountSafety() {
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
+  const [orderOpen, setOrderOpen] = useState(false)
+  const [orderPkg, setOrderPkg] = useState<string | null>(null)
+
+  const openOrder = (pkgId?: string) => {
+    setOrderPkg(pkgId ?? null)
+    setOrderOpen(true)
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100)
@@ -1203,6 +1560,7 @@ export default function Home() {
   }, [])
 
   return (
+    <OrderCtx.Provider value={openOrder}>
     <div className="min-h-screen flex flex-col">
       <MusicPlayer />
 
@@ -1230,12 +1588,12 @@ export default function Home() {
               <a href="#pricelist" className="hidden sm:inline-flex text-sm font-semibold text-foreground/70 hover:text-primary px-3 py-1.5 rounded-full hover:bg-secondary transition-colors">
                 Harga
               </a>
-              <a
-                href="#contact"
+              <button
+                onClick={() => openOrder()}
                 className="inline-flex items-center gap-1.5 gradient-animated text-white text-sm font-bold px-4 py-2 rounded-full shadow-md shadow-pink-300/40 hover:scale-105 transition-transform"
               >
                 💬 Order
-              </a>
+              </button>
             </nav>
           </div>
         </header>
@@ -1440,12 +1798,9 @@ export default function Home() {
             </Reveal>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-              <PriceCard poster="2️⃣" price="Rp15.000" jaminan="200" keepHari="Menyesuaikan" gain="200-300+" delay={0} />
-              <PriceCard poster="3️⃣" price="Rp28.000" jaminan="500" keepHari="Menyesuaikan" gain="500-750+" delay={100} />
-              <PriceCard poster="4️⃣" price="Rp42.000" jaminan="1.000" keepHari="1-5" gain="1k-1,5k+" delay={200} />
-              <PriceCard poster="5️⃣" price="Rp62.000" jaminan="2.000" keepHari="1-6" gain="2k-2,5k+" delay={300} popular />
-              <PriceCard poster="6️⃣" price="Rp115.000" jaminan="5.000" keepHari="3-6" gain="5k-8k+" delay={400} />
-              <PriceCard poster="7️⃣" price="Rp185.000" jaminan="10.000" keepHari="5-10" gain="10k-11k+" delay={500} />
+              {PACKAGES.map(p => (
+                <PriceCard key={p.id} pkg={p} delay={(Number(p.id.replace(/\D/g, '')) - 2) * 100} />
+              ))}
             </div>
           </div>
         </section>
@@ -1628,6 +1983,10 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {/* ===== ORDER MODAL (flow 2.0) ===== */}
+      <OrderModal open={orderOpen} pkgId={orderPkg} onOpenChange={setOrderOpen} />
     </div>
+    </OrderCtx.Provider>
   )
 }
