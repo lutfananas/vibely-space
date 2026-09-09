@@ -491,13 +491,13 @@ function DashboardMock() {
             </div>
           </div>
 
-          {/* Poster giveaway preview */}
+          {/* Poster giveaway preview — aspect 2:3 biar poster kelihatan utuh (tidak terpotong) */}
           <div className="rounded-2xl border border-pink-100 p-2.5 mb-4 bg-gradient-to-b from-sky-50/40 to-pink-50/40">
-            <div className="relative rounded-xl overflow-hidden">
+            <div className="relative rounded-xl overflow-hidden bg-pink-50">
               <img
                 src="/hero-image.jpg"
                 alt="Poster Giveaway VIBELY SPACE"
-                className="w-full h-48 sm:h-56 object-cover object-top"
+                className="w-full aspect-[2/3] object-contain object-top"
               />
               <span className="absolute top-2.5 left-2.5 glass text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-primary border border-pink-200/80 px-2.5 py-1 rounded-full">
                 📷 Poster Giveaway
@@ -664,7 +664,6 @@ function OrderModal({
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
   const [selected, setSelected] = useState<string | null>(null)
   const [username, setUsername] = useState('')
-  const [campaign, setCampaign] = useState('')
   const [startDate, setStartDate] = useState('')
   const [touched, setTouched] = useState(false)
 
@@ -676,7 +675,6 @@ function OrderModal({
       setSelected(pkgId ?? null)
       setStep(1)
       setUsername('')
-      setCampaign('')
       setTouched(false)
       const today = new Date().toISOString().slice(0, 10)
       setStartDate(today)
@@ -700,7 +698,6 @@ function OrderModal({
   const pkg = PACKAGES.find(p => p.id === selected) ?? null
   const cleanHandle = username.trim().replace(/^@/, '')
   const usernameValid = cleanHandle.length > 0
-  const campaignDisplay = campaign.trim() || 'Sponsor Giveaway'
   const startDisplay = startDate
     ? new Date(startDate + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
     : 'Segera'
@@ -717,7 +714,6 @@ function OrderModal({
       `🌷 Keep hari: ${pkg.keepHari}`,
       `🤩 Estimasi gain: ${pkg.gain} folls`,
       `📱 Instagram: @${cleanHandle}`,
-      `📣 Campaign: ${campaignDisplay}`,
       `📅 Mulai: ${startDisplay}`,
       '',
       'Mohon verifikasi pesanan & kirim nomor rekening untuk pembayaran. Terima kasih 🙏',
@@ -863,16 +859,6 @@ function OrderModal({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-foreground mb-1.5">Nama Campaign</label>
-                <input
-                  value={campaign}
-                  onChange={e => setCampaign(e.target.value)}
-                  placeholder="Opsional — contoh: Giveaway Akhir Bulan"
-                  className="w-full px-4 py-3 rounded-2xl border-2 border-pink-100 bg-white text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary transition-colors"
-                />
-              </div>
-
-              <div>
                 <label className="block text-xs font-bold text-foreground mb-1.5">Rencana Mulai</label>
                 <div className="relative">
                   <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -897,7 +883,6 @@ function OrderModal({
                   ['🌷 Keep hari', pkg.keepHari],
                   ['🤩 Estimasi gain', `${pkg.gain} folls`],
                   ['📱 Instagram', `@${cleanHandle}`],
-                  ['📣 Campaign', campaignDisplay],
                   ['📅 Mulai', startDisplay],
                 ].map(([k, v], i) => (
                   <div key={i} className={`flex items-center justify-between gap-3 px-4 py-2.5 text-sm ${i % 2 ? 'bg-white' : 'bg-pink-50/50'}`}>
@@ -1007,6 +992,131 @@ function OrderModal({
 }
 
 /* ============================================================
+   ORDER CHOICE MODAL — pop-up 2 pilihan ketika user klik
+   "Chat WhatsApp 💬" di banner CTA bawah:
+     1. Pilih Order Paket  → buka OrderModal (PKG-02..07)
+     2. Direct Message      → langsung WA dengan format kosong
+   ============================================================ */
+
+const DM_WA_TEXT = [
+  'Halo VIBELY SPACE ✦',
+  '',
+  'Format order🌷',
+  'Poster : ',
+  'Username IG : ',
+].join('\n')
+
+const dmWaLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(DM_WA_TEXT)}`
+
+function OrderChoiceModal({
+  open,
+  onOpenChange,
+  onPickPackage,
+}: {
+  open: boolean
+  onOpenChange: (v: boolean) => void
+  onPickPackage: () => void
+}) {
+  const close = () => onOpenChange(false)
+
+  useEffect(() => {
+    if (!open) return
+    document.body.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  if (!open) return null
+
+  const handleDirect = () => {
+    close()
+    window.open(dmWaLink, '_blank', 'noopener,noreferrer')
+  }
+
+  const handlePickPkg = () => {
+    close()
+    onPickPackage()
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[110] flex items-center justify-center bg-[#3D1A2B]/40 animate-fade-in p-4"
+      onClick={close}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        className="relative bg-white w-full max-w-sm rounded-[2rem] border border-pink-100 shadow-cute-lg animate-pop-in overflow-hidden"
+      >
+        {/* soft glow */}
+        <div
+          className="absolute -top-24 -right-24 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.25) 0%, rgba(244,114,182,0) 70%)' }}
+        />
+        <div
+          className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(56,189,248,0) 70%)' }}
+        />
+
+        {/* Header */}
+        <div className="relative flex items-center gap-2.5 px-5 pt-5 pb-3 border-b border-pink-100/80">
+          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-100 to-sky-100 flex items-center justify-center text-sm">🎀</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-display font-semibold text-foreground text-base leading-tight">Mau lanjut bagaimana? ✦</h3>
+            <p className="text-[11px] text-muted-foreground">Pilih salah satu opsi di bawah ya 😊</p>
+          </div>
+          <button
+            onClick={close}
+            aria-label="Tutup"
+            className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center hover:bg-pink-100 hover:text-primary transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Body — dua tombol pilihan */}
+        <div className="relative px-5 py-5 space-y-3">
+          {/* Pilih Order Paket */}
+          <button
+            onClick={handlePickPkg}
+            className="w-full text-left rounded-2xl border-2 border-pink-100 hover:border-primary bg-white hover:bg-gradient-to-br from-pink-50 to-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-cute group"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl gradient-animated text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">📦</div>
+              <div className="flex-1 min-w-0">
+                <p className="font-display font-bold text-foreground text-sm">Pilih Order Paket</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">Lihat semua paket Poster 2–7, isi data singkat, lanjut WhatsApp otomatis ✦</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+            </div>
+          </button>
+
+          {/* Direct Message */}
+          <button
+            onClick={handleDirect}
+            className="w-full text-left rounded-2xl border-2 border-sky-100 hover:border-sky-400 bg-white hover:bg-gradient-to-br from-sky-50 to-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-cute group"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">💬</div>
+              <div className="flex-1 min-w-0">
+                <p className="font-display font-bold text-foreground text-sm">Direct Message</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">Chat WA langsung dengan format kosong — isi sendiri, admin bantu proses 🙏</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-sky-500 transition-colors flex-shrink-0" />
+            </div>
+          </button>
+
+          <p className="text-center text-[10px] text-muted-foreground/70 pt-1">pilih salah satu untuk lanjut 🎀</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ============================================================
    MUSIC PLAYER (welcome popup + floating toggle)
    Local audio — no YouTube iframe, no heavy blur layers
    (dua hal itu penyebab umum tombol gagal ter-paint di HP)
@@ -1043,8 +1153,25 @@ function MusicPlayer() {
     <>
       {/* Welcome popup */}
       {showWelcome && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#3D1A2B]/35 animate-fade-in px-4">
-          <div className="relative bg-white/95 rounded-[2rem] p-8 sm:p-12 shadow-cute-lg border border-pink-100 max-w-sm w-full text-center animate-pop-in overflow-hidden">
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center animate-fade-in px-4"
+          style={{
+            background: 'rgba(60, 26, 43, 0.18)',
+            backdropFilter: 'blur(22px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+          }}
+        >
+          <div
+            className="relative rounded-[2rem] p-8 sm:p-12 max-w-sm w-full text-center animate-pop-in overflow-hidden"
+            style={{
+              background: 'rgba(255, 255, 255, 0.6)',
+              backdropFilter: 'blur(28px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.6)',
+              boxShadow:
+                '0 12px 40px rgba(233, 30, 140, 0.20), 0 4px 16px rgba(56, 189, 248, 0.12), inset 0 1px 2px rgba(255, 255, 255, 0.7), inset 0 -1px 1px rgba(255, 255, 255, 0.2)',
+            }}
+          >
             {/* Soft glow — radial gradient murah, tanpa filter blur (aman di semua HP) */}
             <div
               className="absolute -top-24 -right-24 w-56 h-56 rounded-full pointer-events-none"
@@ -1184,6 +1311,11 @@ function TestimonialsCarousel() {
   const [canNext, setCanNext] = useState(true)
   const [active, setActive] = useState(0)
   const drag = useRef({ down: false, startX: 0, startScroll: 0 })
+  // Auto-play state: timer ticks every 4s, paused during user interaction
+  const autoTimerRef = useRef<number | null>(null)
+  const resumeTimerRef = useRef<number | null>(null)
+  const AUTOPLAY_INTERVAL = 4500 // ms — sedikit lebih lambat supaya user bisa baca
+  const RESUME_DELAY = 3000 // ms setelah interaksi terakhir sebelum auto-play jalan lagi
 
   const updateState = () => {
     const el = trackRef.current
@@ -1202,15 +1334,66 @@ function TestimonialsCarousel() {
     setActive(best)
   }
 
+  // ===== AUTO-PLAY helpers =====
+  const clearAutoTimer = () => {
+    if (autoTimerRef.current !== null) {
+      clearTimeout(autoTimerRef.current)
+      autoTimerRef.current = null
+    }
+  }
+  const clearResumeTimer = () => {
+    if (resumeTimerRef.current !== null) {
+      clearTimeout(resumeTimerRef.current)
+      resumeTimerRef.current = null
+    }
+  }
+  const scheduleAutoPlay = () => {
+    clearAutoTimer()
+    autoTimerRef.current = window.setTimeout(() => {
+      const el = trackRef.current
+      if (!el) return scheduleAutoPlay()
+      const max = el.scrollWidth - el.clientWidth
+      // Kalau sudah di ujung kanan, balik ke awal; kalau belum, maju 1 kartu
+      if (el.scrollLeft >= max - 4) {
+        el.scrollTo({ left: 0, behavior: 'smooth' })
+      } else {
+        const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-card]'))
+        const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0
+        const cur = el.scrollLeft
+        const pos = cards
+          .map(c => Math.min(c.offsetLeft - pad, max))
+          .filter(p => p > cur + 10)
+        if (pos.length) {
+          el.scrollTo({ left: Math.min(...pos), behavior: 'smooth' })
+        } else {
+          el.scrollTo({ left: 0, behavior: 'smooth' })
+        }
+      }
+      scheduleAutoPlay()
+    }, AUTOPLAY_INTERVAL)
+  }
+  const pauseAutoPlay = () => {
+    clearAutoTimer()
+    clearResumeTimer()
+  }
+  const resumeAutoPlay = (delay = RESUME_DELAY) => {
+    clearResumeTimer()
+    clearAutoTimer()
+    resumeTimerRef.current = window.setTimeout(() => scheduleAutoPlay(), delay)
+  }
+
   useEffect(() => {
     updateState()
     const el = trackRef.current
     if (!el) return
     el.addEventListener('scroll', updateState, { passive: true })
     window.addEventListener('resize', updateState)
+    scheduleAutoPlay() // mulai auto-play saat mount
     return () => {
       el.removeEventListener('scroll', updateState)
       window.removeEventListener('resize', updateState)
+      clearAutoTimer()
+      clearResumeTimer()
     }
   }, [])
 
@@ -1239,8 +1422,11 @@ function TestimonialsCarousel() {
     el.scrollTo({ left: target, behavior: 'smooth' })
   }
 
-  /* drag-to-scroll pakai mouse — di HP sudah native swipe */
+  /* drag-to-scroll pakai mouse — di HP sudah native swipe.
+     Auto-play selalu di-pause saat pointer down (semua tipe),
+     dan resume ~3 detik setelah pointer up / cancel. */
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    pauseAutoPlay()
     if (e.pointerType !== 'mouse') return
     const el = trackRef.current
     if (!el) return
@@ -1256,14 +1442,17 @@ function TestimonialsCarousel() {
     el.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX)
   }
   const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!drag.current.down) return
-    drag.current.down = false
-    const el = trackRef.current
-    if (el) {
-      el.style.scrollSnapType = ''
-      el.style.cursor = ''
-      try { el.releasePointerCapture(e.pointerId) } catch {}
+    if (drag.current.down) {
+      drag.current.down = false
+      const el = trackRef.current
+      if (el) {
+        el.style.scrollSnapType = ''
+        el.style.cursor = ''
+        try { el.releasePointerCapture(e.pointerId) } catch {}
+      }
     }
+    // Selalu resume setelah pointer up / cancel (semua tipe pointer)
+    resumeAutoPlay()
   }
 
   return (
@@ -1299,7 +1488,7 @@ function TestimonialsCarousel() {
 
         {/* Arrow buttons — desktop */}
         <button
-          onClick={() => scrollByCard(-1)}
+          onClick={() => { pauseAutoPlay(); scrollByCard(-1); resumeAutoPlay() }}
           disabled={!canPrev}
           aria-label="Review sebelumnya"
           className="hidden sm:flex absolute -left-3 lg:-left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-white border border-pink-200 text-primary shadow-cute hover:shadow-cute-lg hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none"
@@ -1307,7 +1496,7 @@ function TestimonialsCarousel() {
           <ChevronLeft className="w-5 h-5" />
         </button>
         <button
-          onClick={() => scrollByCard(1)}
+          onClick={() => { pauseAutoPlay(); scrollByCard(1); resumeAutoPlay() }}
           disabled={!canNext}
           aria-label="Review berikutnya"
           className="hidden sm:flex absolute -right-3 lg:-right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-white border border-pink-200 text-primary shadow-cute hover:shadow-cute-lg hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none"
@@ -1321,7 +1510,7 @@ function TestimonialsCarousel() {
         {TESTIMONIALS.map((_, i) => (
           <button
             key={i}
-            onClick={() => scrollToCard(i)}
+            onClick={() => { pauseAutoPlay(); scrollToCard(i); resumeAutoPlay() }}
             aria-label={`Ke review ${i + 1}`}
             className={`h-2 rounded-full transition-all duration-300 ${
               i === active ? 'w-6 bg-primary shadow-sm' : 'w-2 bg-pink-200 hover:bg-pink-300'
@@ -1330,7 +1519,7 @@ function TestimonialsCarousel() {
         ))}
       </div>
 
-      <p className="text-center text-[11px] text-muted-foreground/60 mt-3">geser ke kanan / kiri untuk lihat review ✦</p>
+      <p className="text-center text-[11px] text-muted-foreground/60 mt-3">auto-slide on, bisa juga di-geser manual ✦</p>
     </div>
   )
 }
@@ -1548,6 +1737,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [orderOpen, setOrderOpen] = useState(false)
   const [orderPkg, setOrderPkg] = useState<string | null>(null)
+  const [choiceOpen, setChoiceOpen] = useState(false)
 
   const openOrder = (pkgId?: string) => {
     setOrderPkg(pkgId ?? null)
@@ -1915,11 +2105,12 @@ export default function Home() {
                     Jangan lewatkan kesempatan tingkatkan followers IG kamu dengan cara murah, cepat & terpercaya!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3.5 justify-center">
-                    <a href="https://wa.me/6285694106233" target="_blank" rel="noopener noreferrer">
-                      <Button className="bg-white text-primary font-bold px-8 py-6 rounded-full text-base hover:bg-white/90 hover:scale-105 transition-all shadow-lg border-0">
-                        Chat WhatsApp 💬
-                      </Button>
-                    </a>
+                    <Button
+                      onClick={() => setChoiceOpen(true)}
+                      className="bg-white text-primary font-bold px-8 py-6 rounded-full text-base hover:bg-white/90 hover:scale-105 transition-all shadow-lg border-0 cursor-pointer"
+                    >
+                      Chat WhatsApp 💬
+                    </Button>
                     <a href="https://instagram.com/vibely.space" target="_blank" rel="noopener noreferrer">
                       <Button className="bg-white/15 text-white border-2 border-white/50 font-bold px-8 py-6 rounded-full text-base hover:bg-white/25 hover:scale-105 transition-all backdrop-blur-sm">
                         DM Instagram 📸
@@ -1986,6 +2177,13 @@ export default function Home() {
 
       {/* ===== ORDER MODAL (flow 2.0) ===== */}
       <OrderModal open={orderOpen} pkgId={orderPkg} onOpenChange={setOrderOpen} />
+
+      {/* ===== ORDER CHOICE MODAL (pop-up 2 pilihan: Pilih Paket / Direct Message) ===== */}
+      <OrderChoiceModal
+        open={choiceOpen}
+        onOpenChange={setChoiceOpen}
+        onPickPackage={() => openOrder()}
+      />
     </div>
     </OrderCtx.Provider>
   )

@@ -331,3 +331,53 @@ Stage Summary:
 - Rollback: cp backups/hero-image.v1-original.png public/hero-image.png + revert 2 src changes
 - Script terpersist: scripts/swap-hero-poster.py (bisa di-edit kalau ada penyesuaian)
 - Commit akan dibuat setelah ini. Deploy ke vibely-space.vercel.app belum dilakukan — nunggu instruksi user
+
+---
+Task ID: revision-pack-1
+Agent: Main Agent (Super Z)
+Task: Beberapa revisi user sekaligus + deploy
+
+Work Log:
+1. Hilangkan input "Nama Campaign" dari OrderModal:
+   - State `campaign` dihapus, `setCampaign('')` di reset-block dihapus
+   - `campaignDisplay` dihapus, baris "📣 Campaign: ${campaignDisplay}" di WA message dihapus
+   - Input field di step 2 dihapus, baris ['📣 Campaign', campaignDisplay] di Review step 3 dihapus
+   - Total: 6 edit, ~15 baris hilang
+
+2. CTA "Yuk, Order Sekarang! 🎀" → "Chat WhatsApp 💬":
+   - Sebelumnya: <a href="wa.me/..."> langsung pop-up WA
+   - Sekarang: <button> buka OrderChoiceModal (pop-up 2 pilihan)
+   - OrderChoiceModal baru (~120 baris):
+     - Tombol "Pilih Order Paket" (gradient pink) → openOrder() → OrderModal step 1
+     - Tombol "Direct Message" (sky gradient) → WA langsung dengan format kosong
+   - Format DM: "Halo VIBELY SPACE ✦ / / Format order🌷 / Poster : / Username IG : "
+   - choiceOpen state di Home() baru, render <OrderChoiceModal /> di bawah <OrderModal />
+
+3. TestimonialsCarousel auto-play + manual slide:
+   - Auto-play: setInterval 4.5s, scroll ke kartu berikutnya, wrap ke awal kalau di ujung
+   - Pause saat pointer down (semua tipe: mouse + touch)
+   - Resume 3 detik setelah pointer up / cancel / leave
+   - Arrow click & dot click: pause → scroll → resume (3s delay)
+   - Update caption "auto-slide on, bisa juga di-geser manual ✦"
+
+4. iOS 27 Liquid Glass pada welcome popup (START VIBING):
+   - Outer backdrop: rgba(60,26,43,0.18) + backdrop-filter blur(22px) saturate(160%) — semua area di belakang popup jadi glass sampai START VIBING diklik
+   - Inner card: rgba(255,255,255,0.6) + backdrop-filter blur(28px) saturate(180%) + border rgba(255,255,255,0.6) + multi-shadow (drop + inset highlights) — Liquid Glass material khas iOS 27
+   - Webkit prefix untuk Safari/iOS
+   - Tombol START VIBING tetap punya inline backgroundColor: '#E91E8C' (solid fallback, paint-safe di HP)
+
+5. Poster baru tidak terpotong:
+   - Dari: className="w-full h-48 sm:h-56 object-cover object-top" (object-cover = crop ke fixed height)
+   - Ke: className="w-full aspect-[2/3] object-contain object-top" + container bg-pink-50
+   - aspect-[2/3] cocok dengan rasio poster asli (900x1350), object-contain tidak crop
+   - Frame ikut memanjang ke bawah otomatis — seluruh poster terlihat jelas
+
+Build verification:
+- `npx next build` sukses: Compiled successfully in 5.0s, Generating static pages (5/5) in 126.7ms
+- Tidak ada error / warning TypeScript
+- Dev server di sandbox mati setelah ~10 detik (issue sandbox, bukan code) — verifikasi visual akan dilakukan via Vercel deploy
+
+Stage Summary:
+- 5 perubahan user sekaligus sudah diimplementasi di src/app/page.tsx (+235 / -37 baris)
+- Production build verified sukses
+- Akan deploy ke vibely-space.vercel.app
