@@ -1760,7 +1760,13 @@ export default function Home() {
 
       {/* ===== FLOATING NAVBAR (iOS 27 Liquid Glass) ===== */}
       <div className="fixed top-4 left-0 right-0 z-50 px-4">
-        <header className="max-w-4xl mx-auto liquid-glass rounded-full shadow-cute">
+        <header
+          className="max-w-4xl mx-auto liquid-glass rounded-full shadow-cute"
+          style={{
+            backdropFilter: 'blur(28px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          }}
+        >
           <div className="px-5 py-2.5 flex items-center justify-between gap-3">
             <a href="#" className="flex items-center gap-2.5 min-w-0">
               <img

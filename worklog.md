@@ -417,3 +417,35 @@ Stage Summary:
 - public/avatar.png: 256x256 PNG wajah user (crop dari poster)
 - Navbar atas: Liquid Glass khas iOS 27 (blur 28px + saturate 180% + inset highlights)
 - Akan deploy ke vibely-space.vercel.app
+
+---
+Task ID: revision-pack-3
+Agent: Main Agent (Super Z)
+Task: Fix avatar gepeng + navbar liquid glass belum kelihatan efek kaca
+
+Work Log:
+1. AVATAR GEPENG — root cause: crop box lama 225x308 (lebar x tinggi, TIDAK persegi)
+   di-resize ke 256x256 = distorsi horizontal 1.14x + squash vertikal 0.83x -> wajah gepeng.
+   Fix: crop SQUARE 280x280 centered di wajah (CX=727, CY=250, HALF=140) ->
+   resize 256x256 tanpa distorsi. VLM verify: "face properly proportioned, clean headshot".
+
+2. NAVBAR GLASS TIDAK KELIHATAN — 2 penyebab:
+   a. CSS minifier (Lightning CSS di Next build) MEMBUANG deklarasi standar
+      `backdrop-filter` dari .liquid-glass — di CSS production cuma tersisa
+      `-webkit-backdrop-filter:blur(28px)saturate(180%)` (dicek via curl CSS chunk live).
+      -> backdrop-filter sekarang pindah ke INLINE STYLE di <header> (React camelCase
+      backdropFilter + WebkitBackdropFilter), pola sama dengan welcome popup yang
+      terbukti jalan — inline style tidak bisa dibuang minifier.
+   b. background rgba(255,255,255,0.55) terlalu opaque -> di atas hero yang putih,
+      blur nyaris tak terlihat. .liquid-glass sekarang pakai gradient tint
+      pink->white->sky (alpha 0.22/0.45/0.22) + border putih 0.65 + inset highlight
+      lebih kuat (0.9 top / 0.3 bottom) -> material kaca terlihat jelas walau di
+      atas background terang.
+
+Build verification:
+- npx next build sukses, no errors.
+
+Stage Summary:
+- public/avatar.png: crop persegi 280x280 -> 256x256, proporsi wajah normal
+- Navbar: inline backdrop-filter blur(28px) saturate(180%) + .liquid-glass gradient tint
+- Deploy berikutnya ke vibely-space.vercel.app
