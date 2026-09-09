@@ -2139,16 +2139,31 @@ export default function Home() {
         </section>
       </main>
 
-      {/* ===== FOOTER ===== */}
+      {/* ===== FOOTER (iOS 27 Liquid Glass — pink-blue theme) ===== */}
       <footer className="relative mt-auto">
-        <div className="max-w-6xl mx-auto px-4 pb-8">
-          <div className="bg-white/90 rounded-[2rem] border border-pink-100 shadow-cute px-6 py-6 sm:px-10">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
+        {/* Blobs warna di belakang footer supaya efek blur kaca terlihat jelas */}
+        <div className="absolute -top-12 left-[6%] w-60 h-60 rounded-full bg-pink-300/40 blur-3xl pointer-events-none animate-blob" />
+        <div className="absolute -bottom-16 right-[8%] w-72 h-72 rounded-full bg-sky-300/40 blur-3xl pointer-events-none animate-blob" style={{ animationDelay: '5s' }} />
+        <div className="absolute top-1/4 left-[45%] w-44 h-44 rounded-full bg-fuchsia-200/30 blur-3xl pointer-events-none animate-blob" style={{ animationDelay: '2.5s' }} />
+
+        <div className="relative max-w-6xl mx-auto px-4 pb-8">
+          <div
+            className="liquid-glass rounded-[2rem] shadow-cute px-6 py-6 sm:px-10 relative overflow-hidden"
+            style={{
+              backdropFilter: 'blur(34px) saturate(200%) brightness(1.08)',
+              WebkitBackdropFilter: 'blur(34px) saturate(200%) brightness(1.08)',
+            }}
+          >
+            {/* soft color glow di dalam kartu — tema biru pink */}
+            <div className="absolute -top-16 -right-14 w-44 h-44 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.28) 0%, rgba(244,114,182,0) 70%)' }} />
+            <div className="absolute -bottom-16 -left-14 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(56,189,248,0.28) 0%, rgba(56,189,248,0) 70%)' }} />
+
+            <div className="relative flex flex-col sm:flex-row items-center justify-between gap-5">
               <div className="flex items-center gap-3">
                 <img
                   src="/logo-circle.png"
                   alt="VIBELY SPACE Logo"
-                  className="w-10 h-10 rounded-full border-2 border-pink-200"
+                  className="w-10 h-10 rounded-full border-2 border-pink-200 shadow-sm"
                 />
                 <div>
                   <p className="font-display font-semibold text-primary">VIBELY SPACE ✨</p>
@@ -2163,7 +2178,7 @@ export default function Home() {
                   href="https://instagram.com/vibely.space"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-pink-50 text-primary flex items-center justify-center hover:gradient-animated hover:text-white transition-all hover:scale-110"
+                  className="w-10 h-10 rounded-full bg-white/60 text-primary flex items-center justify-center shadow-sm hover:gradient-animated hover:text-white transition-all hover:scale-110"
                   aria-label="Instagram"
                 >
                   <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -2174,7 +2189,7 @@ export default function Home() {
                   href="https://wa.me/6285694106233"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center hover:gradient-animated hover:text-white transition-all hover:scale-110"
+                  className="w-10 h-10 rounded-full bg-white/60 text-sky-500 flex items-center justify-center shadow-sm hover:gradient-animated hover:text-white transition-all hover:scale-110"
                   aria-label="WhatsApp"
                 >
                   <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -2184,7 +2199,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <p className="text-center text-[11px] text-muted-foreground/60 mt-4">
+          <p className="relative text-center text-[11px] text-muted-foreground/60 mt-4">
             © {new Date().getFullYear()} VIBELY SPACE. All rights reserved.
           </p>
         </div>
