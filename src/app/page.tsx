@@ -1758,13 +1758,13 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <MusicPlayer />
 
-      {/* ===== FLOATING NAVBAR (iOS 27 Liquid Glass) ===== */}
+      {/* ===== FLOATING NAVBAR (iOS 27 Liquid Glass — stronger) ===== */}
       <div className="fixed top-4 left-0 right-0 z-50 px-4">
         <header
           className="max-w-4xl mx-auto liquid-glass rounded-full shadow-cute"
           style={{
-            backdropFilter: 'blur(28px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+            backdropFilter: 'blur(34px) saturate(200%) brightness(1.08)',
+            WebkitBackdropFilter: 'blur(34px) saturate(200%) brightness(1.08)',
           }}
         >
           <div className="px-5 py-2.5 flex items-center justify-between gap-3">
@@ -2077,7 +2077,12 @@ export default function Home() {
               </Reveal>
 
               <Reveal delay={200}>
-                <a href="https://wa.me/6285694106233" target="_blank" rel="noopener noreferrer" className="group block">
+                <button
+                  type="button"
+                  onClick={() => setChoiceOpen(true)}
+                  className="group block w-full text-left"
+                  aria-label="Chat WhatsApp"
+                >
                   <Card className="rounded-[2rem] border-2 border-sky-100 hover:border-sky-300 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-cute-lg shadow-cute bg-white overflow-hidden">
                     <CardContent className="p-7 sm:p-8 flex items-center gap-5">
                       <div className="w-16 h-16 flex-shrink-0 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
@@ -2088,12 +2093,12 @@ export default function Home() {
                       <div>
                         <h3 className="font-display text-lg font-semibold text-foreground">WhatsApp</h3>
                         <p className="text-sky-600 font-bold text-lg">085694106233</p>
-                        <p className="text-xs text-muted-foreground mt-1">Chat langsung 💬</p>
+                        <p className="text-xs text-muted-foreground mt-1">Klik untuk pilih opsi chat 💬</p>
                       </div>
                       <span className="ml-auto text-sky-300 group-hover:text-sky-500 group-hover:translate-x-1 transition-all text-xl">→</span>
                     </CardContent>
                   </Card>
-                </a>
+                </button>
               </Reveal>
             </div>
           </div>
