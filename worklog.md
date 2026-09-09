@@ -449,3 +449,54 @@ Stage Summary:
 - public/avatar.png: crop persegi 280x280 -> 256x256, proporsi wajah normal
 - Navbar: inline backdrop-filter blur(28px) saturate(180%) + .liquid-glass gradient tint
 - Deploy berikutnya ke vibely-space.vercel.app
+
+---
+Task ID: revision-pack-4
+Agent: Main Agent (Super Z)
+Task: WhatsApp Contact card buka OrderChoiceModal + avatar gepeng v3 fix + navbar liquid glass lebih kuat + deploy
+
+Work Log:
+1. WHATSAPP CONTACT CARD -> ORDERCHOICEMODAL (user request baru)
+   User message: "pada card dibawah ini belum seperti chat whatss app di klik"
+   Sebelum: <a href="https://wa.me/6285694106233" target="_blank"> langsung buka WA
+   Sesudah: <button onClick={() => setChoiceOpen(true)}> — buka OrderChoiceModal
+   yang sama seperti CTA "Chat WhatsApp 💬" (Pilih Order Paket / Direct Message)
+   Subtitle card: "Chat langsung 💬" -> "Klik untuk pilih opsi chat 💬"
+   Footer WA pill icon (kecil) tetap direct wa.me (bukan 'card')
+   Verified via agent-browser: click card -> OrderChoiceModal muncul -> click
+   "Pilih Order Paket" -> OrderModal dengan 6 paket (PKG-02..07) muncul.
+
+2. AVATAR GEPENG v3 — user complain 2x, v2 masih terlalu lebar crop (face
+   hanya ~33% dari frame -> kelihatan kecil + tidak clear di display 48px).
+   Fix v3: HALF 140 -> 90 (square 180x180 centered di wajah) -> face fills
+   ~54% dari avatar width, jauh lebih prominent. Mild LANCZOS sharpening
+   (1.15x) untuk kompensasi upscale dari 180x180 ke 256x256.
+   VLM verify: "face clearly visible, prominent, well-centered, undistorted.
+   Rating: 9/10".
+   In-page verify (screenshot dashboard): VLM konfirmasi avatar 9/10.
+
+3. NAVBAR LIQUID GLASS KUAT (user complain "belum ada efek kaca")
+   a. CSS .liquid-glass: gradient tint 1-layer -> 2-layer:
+      - Layer 1: vertical white specular sheen (top 0.55, mid 0.05, bottom 0.35)
+        — iOS 27 signature "wet glass" look
+      - Layer 2: horizontal pink->white->sky tint (alpha 0.30/0.18/0.30)
+      - Border 0.65 -> 0.7 (lebih tajam)
+      - Multi-layer inset highlights: top 1.5px white 1.0 + 0.5px 0.95
+        + bottom -1px 0.45 + inner glow 12px 0.18 — specular lebih dramatis
+      - Drop shadow: 10px/36px pink 0.18 + 4px/14px sky 0.14 (lebih dalam)
+   b. Inline backdrop-filter navbar: blur 28px sat 180%
+      -> blur 34px sat 200% brightness 1.08 (lebih agresif supaya kaca
+         jelas di atas background terang)
+   VLM verify: "frosted glass + blur of background + bright white edge
+   highlights. Rating: 9/10. Excellent example of modern glassmorphism."
+
+Build: npx next build sukses dalam 5.4s, no errors.
+Deploy: npx vercel --prod sukses 29s, aliased ke vibely-space.vercel.app
+Commit: ec26b0d revision-pack-4
+
+Stage Summary:
+- Live di https://vibely-space.vercel.app
+- WhatsApp card di Contact: klik -> pop-up "Mau lanjut bagaimana?" (2 opsi)
+- Avatar: face prominent, undistorted (VLM 9/10)
+- Navbar: liquid glass khas iOS 27 — blur 34px + sat 200% + 2-layer tint
+  + specular edge highlights (VLM 9/10)
