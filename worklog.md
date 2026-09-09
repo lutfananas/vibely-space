@@ -110,3 +110,21 @@ Stage Summary:
 - Live di https://vibely-space.vercel.app
 - Struktur: Hero(dashboard+poster) -> Marquee -> GrowthChart(0 Jam-Hari 3) -> KPI -> About -> FastGrowthStats(CTA daftar) -> Price List -> Order -> Contact
 - Estimasi konsisten 1-3 hari di seluruh halaman, tidak ada lagi 12 minggu
+
+---
+Task ID: badge-testimonials
+Agent: Main Agent (Super Z)
+Task: Ganti badge hero + tambah 5 testimoni cute berjalan setelah kartu kontak
+
+Work Log:
+- Badge hero: "MARKETING DASHBOARD — LIVE" -> "VIBELY SYSTEM START - LIVE"
+- Komponen testimoni baru: TESTIMONIALS (5 data: Nayla/Rizky/Bu Sari/Dinda/Fajar, bahasa natural positif, emoji avatar, handle IG, tone pink/blue selang-seling)
+- TestimonialCard: bubble chat cute (rounded-bl-md), bg gradient pastel, bintang 5, badge "✓ REAL ORDER", hover lift
+- TestimonialsMarquee: judul "Kata Sponsor Puas Kami ⭐" + subtitle, marquee animate-marquee (reuse keyframes translateX -50%, 2 grup identik = loop mulus), durasi 45s inline, pause saat hover (hover:[animation-play-state:paused]), caption "arahkan kursor untuk berhenti ✦"
+- Posisi: di dalam section contact, tepat setelah grid kartu Instagram & WhatsApp, sebelum CTA banner (container max-w-4xl di-split, marquee full-width)
+- Build sukses, deploy --prod, verifikasi: badge baru ada, badge lama hilang, testimoni tampil (REAL ORDER x10 = 5x2 duplikat marquee)
+
+Stage Summary:
+- Live di https://vibely-space.vercel.app
+- Hero badge: "VIBELY SYSTEM START - LIVE"
+- Alur contact: header -> kartu IG/WA -> testimoni berjalan (5, loop, pause on hover) -> CTA banner

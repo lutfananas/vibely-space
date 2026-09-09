@@ -794,6 +794,97 @@ function MusicPlayer() {
 }
 
 /* ============================================================
+   TESTIMONIALS — cute auto-scrolling marquee
+   ============================================================ */
+
+const TESTIMONIALS = [
+  {
+    name: 'Nayla', handle: '@nylaa.iv', emoji: '🌸', tone: 'pink',
+    text: 'Gila sih, baru 1 hari folls aku udah tembus 1k?? Dan aktif semua, sumpah ini real! Makasih vibely, next order lagi ah 💖',
+  },
+  {
+    name: 'Rizky', handle: '@rzky.rd', emoji: '⚡', tone: 'blue',
+    text: 'Awalnya ragu, ternyata folls masuknya real Indo beneran. Engagement aku ikut naik, worth it banget siiip 💯',
+  },
+  {
+    name: 'Bu Sari', handle: '@sari.kitchen', emoji: '🍰', tone: 'pink',
+    text: 'Prosesnya cepet banget, bayar jam 2 siang sorenya udah ditag. Custo tokoku ikut nambah 🥰 Recomended parah!',
+  },
+  {
+    name: 'Dinda', handle: '@dindaapsari_', emoji: '💫', tone: 'blue',
+    text: 'Pertama kali coba sponsor GA dan gak nyesel sama sekali! Adminnya ramah, fast response, folls gak drop-drop 💖',
+  },
+  {
+    name: 'Fajar', handle: '@fjr.gaming', emoji: '🎮', tone: 'pink',
+    text: 'Udah 3x order di sini dan selalu mulus. 10k folls beres dalam 3 hari, murah lagi. Gaskeun gausah mikir 🚀',
+  },
+] as const
+
+function TestimonialCard({ t }: { t: (typeof TESTIMONIALS)[number] }) {
+  return (
+    <div
+      className={`w-72 sm:w-80 shrink-0 whitespace-normal text-left rounded-[1.75rem] rounded-bl-md border shadow-cute p-5 sm:p-6 hover:shadow-cute-lg hover:-translate-y-1 transition-all duration-300 ${
+        t.tone === 'blue'
+          ? 'bg-gradient-to-br from-sky-50 to-white border-sky-100'
+          : 'bg-gradient-to-br from-pink-50 to-white border-pink-100'
+      }`}
+    >
+      <div className="flex items-center justify-between mb-3 gap-2">
+        <span className="text-xs tracking-wide">⭐⭐⭐⭐⭐</span>
+        <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full whitespace-nowrap">✓ REAL ORDER</span>
+      </div>
+      <p className="text-sm text-foreground/85 leading-relaxed">“{t.text}”</p>
+      <div className="flex items-center gap-2.5 mt-4">
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-base flex-shrink-0 shadow-sm ${
+          t.tone === 'blue' ? 'bg-gradient-to-br from-sky-300 to-sky-500' : 'bg-gradient-to-br from-pink-300 to-primary'
+        }`}>
+          {t.emoji}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-foreground truncate">{t.name}</p>
+          <p className="text-[10px] text-muted-foreground truncate">{t.handle}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TestimonialsMarquee() {
+  return (
+    <div className="mt-14 sm:mt-16 relative">
+      <div className="max-w-4xl mx-auto px-4 mb-8 sm:mb-10 text-center">
+        <Reveal>
+          <span className="inline-flex items-center gap-2 glass text-xs sm:text-sm font-bold uppercase tracking-widest px-5 py-2 rounded-full border border-pink-200/80 text-primary shadow-sm">
+            💬 Kata Mereka
+          </span>
+          <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground leading-tight mt-4">
+            Kata <span className="gradient-text">Sponsor Puas</span> Kami ⭐
+          </h3>
+          <p className="text-muted-foreground text-sm sm:text-base mt-2.5">Ribuan sponsor sudah buktikan — sekarang giliran kamu! 💕</p>
+        </Reveal>
+      </div>
+
+      <div className="relative overflow-hidden py-2">
+        <div
+          className="flex whitespace-nowrap animate-marquee hover:[animation-play-state:paused]"
+          style={{ animationDuration: '45s' }}
+        >
+          {[0, 1].map(dup => (
+            <div key={dup} className="flex shrink-0 gap-4 sm:gap-5 pr-4 sm:pr-5" aria-hidden={dup === 1}>
+              {TESTIMONIALS.map((t, i) => (
+                <TestimonialCard key={i} t={t} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-center text-[11px] text-muted-foreground/60 mt-4">arahkan kursor untuk berhenti ✦</p>
+    </div>
+  )
+}
+
+/* ============================================================
    DATA
    ============================================================ */
 
@@ -888,7 +979,7 @@ export default function Home() {
               <div className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 glass border border-sky-200/80 text-sky-600 text-xs sm:text-sm font-bold px-4 py-2 rounded-full mb-6 shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>MARKETING DASHBOARD — LIVE</span>
+                  <span>VIBELY SYSTEM START - LIVE</span>
                 </div>
 
                 <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.6rem] font-semibold text-foreground leading-[1.12] mb-6">
@@ -1170,7 +1261,12 @@ export default function Home() {
                 </a>
               </Reveal>
             </div>
+          </div>
 
+          {/* ===== TESTIMONI CUTE BERJALAN ===== */}
+          <TestimonialsMarquee />
+
+          <div className="max-w-4xl mx-auto px-4">
             {/* Big CTA banner */}
             <Reveal delay={300}>
               <div className="mt-12 relative overflow-hidden rounded-[2.5rem] gradient-animated p-9 sm:p-14 text-center shadow-cute-lg">
