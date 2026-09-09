@@ -150,3 +150,37 @@ Stage Summary:
 - Struktur final sesuai PRD §29: Navbar→Hero floating dashboard→TrustBar→WhatIs→HowItWorks→LiveCampaigns→Results→PlatformPreview→Pricing+Comparison→Safety→FAQ→FinalCTA→Footer + MobileTabBar
 - Interaktif: Order Wizard (PRD §15), Track Campaign (§8), Platform Preview App/Analytics/Admin (§16-19)
 - Rollback: git checkout v2-final-design; restore point aman
+
+---
+Task ID: wa-order-handoff
+Agent: Main Agent (Super Z)
+Task: Hapus step pemilihan metode pembayaran; ganti dengan direct WhatsApp redirect berisi semua detail order pre-filled — admin verifikasi & kirim rekening via WA. TIDAK deploy Vercel.
+
+Work Log:
+- Refactor src/components/v2/order-modal.tsx:
+  - Hapus konstanta PAYMENTS (QRIS / Transfer BCA / E-Wallet) — opsi pemilihan pembayaran dihilangkan sepenuhnya sesuai permintaan user
+  - Step type 1|2|3|4|5 -> 1|2|3|4; array STEPS menjadi 4 entri (Package / Username / Review / Campaign ID); step indicator sekarang tampilkan 3 langkah aktif via STEPS.slice(0,3)
+  - Hapus import yang tidak terpakai: CreditCard, QrCode, Wallet, Landmark (Check tetap dipakai di step indicator kalkulasi, tetap diimpor)
+  - Hapus state payment & fungsi pay()
+  - Tambah konstanta WA_ADMIN_NUMBER="6281234567890" (TODO ganti nomor admin asli)
+  - Tambah buildWaMessage() -> pesan multi-baris pre-filled: Campaign ID + Paket (nama, code) + Target Followers + Durasi + Instagram @handle + Campaign Name + Jadwal Mulai + Total + "Mohon verifikasi pesanan & kirim nomor rekening untuk pembayaran"
+  - Tambah buildWaLink() -> wa.me/<number>?text=<encodeURIComponent(message)>
+  - Tambah sendToWhatsApp(): generate Campaign ID baru -> window.open(WA link, _blank, noopener) -> pindah step 4 (sukses)
+  - Step 3 (Review): tambah info card hijau "Lanjut via WhatsApp" yang menjelaskan WA akan terbuka otomatis berisi semua detail; user tidak perlu ketik ulang
+  - Step 3 footer button: "Lanjut ke Pembayaran" (gradient pink) -> "Kirim via WhatsApp" (emerald-500 dengan shadow emerald) + icon MessageCircle
+  - Step 4 (sukses, ex-step 5): teks diubah jadi "WhatsApp telah terbuka dengan detail order Anda. Tim VIBELY akan verifikasi & kirim nomor rekening via WhatsApp. Setelah pembayaran dikonfirmasi, campaign aktif..." + tombol "Track Campaign Sekarang" (ink) + tombol "Buka WhatsApp Lagi" (link ke wa.me dengan pesan sama, fallback jika tab tertutup)
+  - Header subtitle: "Order campaign giveaway dalam 4 langkah cepat." -> "...dalam 3 langkah cepat."
+  - Footer nav hanya tampil di step < 4 (bukan < 5)
+- Verifikasi:
+  - npx tsc --noEmit: tidak ada error di order-modal.tsx (error lain hanya di backups/examples/skills — tidak terkait)
+  - npx eslint src/components/v2/order-modal.tsx: bersih (0 error)
+  - npx next build: ✓ Compiled successfully in 5.7s, semua 5 page ter-generate, route / tetap static
+- TIDAK dilakukan: deploy Vercel (permintaan eksplisit user — preview dulu, jangan deploy sebelum diminta)
+
+Stage Summary:
+- Flow order baru: Package -> Username + Campaign Info -> Review -> "Kirim via WhatsApp" (buka wa.me dengan pesan pre-filled berisi Campaign ID + paket + @username + nama campaign + jadwal + total) -> Success (Campaign ID + status WAITING + Track + Buka WA lagi)
+- User tidak perlu mengetik ulang di WhatsApp — semua pilihan sudah terisi otomatis
+- Admin (penerima WA): tinggal verifikasi pesanan, balas dengan nomor rekening, konfirmasi pembayaran
+- Tidak ada lagi pemilihan metode pembayaran (QRIS/BCA/E-Wallet) di UI
+- Nomor admin masih placeholder 6281234567890 -> ganti ke nomor asli sebelum go-live
+- Rollback: git checkout src/components/v2/order-modal.tsx@HEAD~1 (kembali ke step Payment)
