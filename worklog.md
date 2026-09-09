@@ -381,3 +381,39 @@ Stage Summary:
 - 5 perubahan user sekaligus sudah diimplementasi di src/app/page.tsx (+235 / -37 baris)
 - Production build verified sukses
 - Akan deploy ke vibely-space.vercel.app
+
+---
+Task ID: revision-pack-2
+Agent: Main Agent (Super Z)
+Task: Ganti logo kecil "Post Giveaway Aktif" pakai crop wajah user + liquid glass navbar + deploy
+
+Work Log:
+1. Crop wajah dari IMG_7921.PNG (poster giveaway asli):
+   - VLM detect: wajah di top 13-20%, left 67-76% dari 1024x1536
+   - Crop expanded ke top 8-28%, left 60-82% (headroom untuk rambut + bahu)
+   - Resize ke 256x256 PNG (object-cover untuk tampil sebagai avatar bulat)
+   - File: public/avatar.png (104KB)
+   - Script: scripts/make-avatar-from-poster.py (reusable kalau perlu re-crop)
+
+2. DashboardMock "Post Giveaway Aktif" row:
+   - Sebelumnya: emoji 🎉 di gradient box (w-12 h-12)
+   - Sekarang: <img src="/avatar.png"> di rounded-xl overflow-hidden dengan ring-pink-200/60 border
+   - Wajah user tampil sebagai logo profile kecil di bawah poster
+
+3. iOS 27 Liquid Glass di navbar atas:
+   - Tambah class `.liquid-glass` di globals.css:
+     - background rgba(255,255,255,0.55) — lebih transparan dari .glass (0.72)
+     - backdrop-filter blur(28px) saturate(180%) — lebih kuat dari .glass (blur 16px, sat 1.6)
+     - border 1px rgba(255,255,255,0.55) — border glass transparan
+     - box-shadow: drop (pink + sky) + inset highlights (top + bottom) — specular khas iOS 27
+   - Navbar: `glass rounded-full border border-pink-200/60` → `liquid-glass rounded-full`
+   - Border pink dihapus (sudah ada white glass border dari .liquid-glass)
+
+Build verification:
+- `npx next build` sukses dalam 8.9s, no errors
+- Compiled successfully
+
+Stage Summary:
+- public/avatar.png: 256x256 PNG wajah user (crop dari poster)
+- Navbar atas: Liquid Glass khas iOS 27 (blur 28px + saturate 180% + inset highlights)
+- Akan deploy ke vibely-space.vercel.app

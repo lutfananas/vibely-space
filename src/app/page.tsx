@@ -507,8 +507,12 @@ function DashboardMock() {
 
           {/* Post preview row */}
           <div className="flex items-center gap-3 rounded-2xl border border-pink-100 p-3 bg-white">
-            <div className="w-12 h-12 rounded-xl gradient-animated flex items-center justify-center text-xl flex-shrink-0 shadow-sm">
-              🎉
+            <div className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 shadow-sm ring-2 ring-pink-200/60">
+              <img
+                src="/avatar.png"
+                alt="Foto owner VIBELY SPACE"
+                className="w-full h-full object-cover object-top"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-foreground truncate">Post Giveaway Aktif 🎉</p>
@@ -1754,9 +1758,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <MusicPlayer />
 
-      {/* ===== FLOATING NAVBAR ===== */}
+      {/* ===== FLOATING NAVBAR (iOS 27 Liquid Glass) ===== */}
       <div className="fixed top-4 left-0 right-0 z-50 px-4">
-        <header className="max-w-4xl mx-auto glass rounded-full border border-pink-200/60 shadow-cute">
+        <header className="max-w-4xl mx-auto liquid-glass rounded-full shadow-cute">
           <div className="px-5 py-2.5 flex items-center justify-between gap-3">
             <a href="#" className="flex items-center gap-2.5 min-w-0">
               <img
