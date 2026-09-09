@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -772,7 +773,7 @@ function MusicPlayer() {
 }
 
 /* ============================================================
-   TESTIMONIALS — cute auto-scrolling marquee
+   TESTIMONIALS — swipeable carousel (drag / swipe / arrows)
    ============================================================ */
 
 const TESTIMONIALS = [
@@ -827,7 +828,94 @@ function TestimonialCard({ t }: { t: (typeof TESTIMONIALS)[number] }) {
   )
 }
 
-function TestimonialsMarquee() {
+function TestimonialsCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [canPrev, setCanPrev] = useState(false)
+  const [canNext, setCanNext] = useState(true)
+  const [active, setActive] = useState(0)
+  const drag = useRef({ down: false, startX: 0, startScroll: 0 })
+
+  const updateState = () => {
+    const el = trackRef.current
+    if (!el) return
+    setCanPrev(el.scrollLeft > 4)
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-card]'))
+    const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0
+    let best = 0
+    let bestDist = Infinity
+    cards.forEach((c, i) => {
+      const d = Math.abs(c.offsetLeft - pad - el.scrollLeft)
+      if (d < bestDist) { bestDist = d; best = i }
+    })
+    if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 4) best = cards.length - 1
+    setActive(best)
+  }
+
+  useEffect(() => {
+    updateState()
+    const el = trackRef.current
+    if (!el) return
+    el.addEventListener('scroll', updateState, { passive: true })
+    window.addEventListener('resize', updateState)
+    return () => {
+      el.removeEventListener('scroll', updateState)
+      window.removeEventListener('resize', updateState)
+    }
+  }, [])
+
+  const scrollToCard = (i: number) => {
+    const el = trackRef.current
+    if (!el) return
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-card]'))
+    const card = cards[Math.max(0, Math.min(i, cards.length - 1))]
+    if (!card) return
+    const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0
+    el.scrollTo({ left: card.offsetLeft - pad, behavior: 'smooth' })
+  }
+
+  const scrollByCard = (dir: 1 | -1) => {
+    const el = trackRef.current
+    if (!el) return
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-card]'))
+    const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0
+    const max = el.scrollWidth - el.clientWidth
+    const cur = el.scrollLeft
+    const pos = cards
+      .map(c => Math.min(c.offsetLeft - pad, max))
+      .filter(p => (dir === 1 ? p > cur + 10 : p < cur - 10))
+    if (!pos.length) return
+    const target = dir === 1 ? Math.min(...pos) : Math.max(...pos)
+    el.scrollTo({ left: target, behavior: 'smooth' })
+  }
+
+  /* drag-to-scroll pakai mouse — di HP sudah native swipe */
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') return
+    const el = trackRef.current
+    if (!el) return
+    drag.current = { down: true, startX: e.clientX, startScroll: el.scrollLeft }
+    el.style.scrollSnapType = 'none'
+    el.style.cursor = 'grabbing'
+    try { el.setPointerCapture(e.pointerId) } catch {}
+  }
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!drag.current.down) return
+    const el = trackRef.current
+    if (!el) return
+    el.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX)
+  }
+  const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!drag.current.down) return
+    drag.current.down = false
+    const el = trackRef.current
+    if (el) {
+      el.style.scrollSnapType = ''
+      el.style.cursor = ''
+      try { el.releasePointerCapture(e.pointerId) } catch {}
+    }
+  }
+
   return (
     <div className="mt-14 sm:mt-16 relative">
       <div className="max-w-4xl mx-auto px-4 mb-8 sm:mb-10 text-center">
@@ -842,22 +930,57 @@ function TestimonialsMarquee() {
         </Reveal>
       </div>
 
-      <div className="relative overflow-hidden py-2">
+      <div className="relative max-w-4xl mx-auto">
         <div
-          className="flex whitespace-nowrap animate-marquee hover:[animation-play-state:paused]"
-          style={{ animationDuration: '45s' }}
+          ref={trackRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={endDrag}
+          className="no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory cursor-grab select-none px-4 sm:px-6 [scroll-padding-left:1rem] sm:[scroll-padding-left:1.5rem]"
         >
-          {[0, 1].map(dup => (
-            <div key={dup} className="flex shrink-0 gap-4 sm:gap-5 pr-4 sm:pr-5" aria-hidden={dup === 1}>
-              {TESTIMONIALS.map((t, i) => (
-                <TestimonialCard key={i} t={t} />
-              ))}
+          {TESTIMONIALS.map((t, i) => (
+            <div key={i} data-card className="snap-start shrink-0">
+              <TestimonialCard t={t} />
             </div>
           ))}
         </div>
+
+        {/* Arrow buttons — desktop */}
+        <button
+          onClick={() => scrollByCard(-1)}
+          disabled={!canPrev}
+          aria-label="Review sebelumnya"
+          className="hidden sm:flex absolute -left-3 lg:-left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-white border border-pink-200 text-primary shadow-cute hover:shadow-cute-lg hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => scrollByCard(1)}
+          disabled={!canNext}
+          aria-label="Review berikutnya"
+          className="hidden sm:flex absolute -right-3 lg:-right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-white border border-pink-200 text-primary shadow-cute hover:shadow-cute-lg hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-30 disabled:pointer-events-none"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
-      <p className="text-center text-[11px] text-muted-foreground/60 mt-4">arahkan kursor untuk berhenti ✦</p>
+      {/* Dots */}
+      <div className="flex items-center justify-center gap-2 mt-5">
+        {TESTIMONIALS.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollToCard(i)}
+            aria-label={`Ke review ${i + 1}`}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === active ? 'w-6 bg-primary shadow-sm' : 'w-2 bg-pink-200 hover:bg-pink-300'
+            }`}
+          />
+        ))}
+      </div>
+
+      <p className="text-center text-[11px] text-muted-foreground/60 mt-3">geser ke kanan / kiri untuk lihat review ✦</p>
     </div>
   )
 }
@@ -1421,7 +1544,7 @@ export default function Home() {
           </div>
 
           {/* ===== TESTIMONI CUTE BERJALAN ===== */}
-          <TestimonialsMarquee />
+          <TestimonialsCarousel />
 
           <div className="max-w-4xl mx-auto px-4">
             {/* Big CTA banner */}

@@ -238,6 +238,10 @@
   border: 2px solid #F5F9FF;
 }
 
+/* Hide scrollbar — testimonials carousel (tetap bisa discroll/drag) */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 /* Selection color */
 ::selection {
   background: #BAE6FD;
