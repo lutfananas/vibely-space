@@ -495,7 +495,7 @@ function DashboardMock() {
           <div className="rounded-2xl border border-pink-100 p-2.5 mb-4 bg-gradient-to-b from-sky-50/40 to-pink-50/40">
             <div className="relative rounded-xl overflow-hidden">
               <img
-                src="/hero-image.png"
+                src="/hero-image.jpg"
                 alt="Poster Giveaway VIBELY SPACE"
                 className="w-full h-48 sm:h-56 object-cover object-top"
               />

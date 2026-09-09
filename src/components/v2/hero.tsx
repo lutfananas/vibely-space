@@ -116,7 +116,7 @@ export function Hero() {
             >
               <div className="overflow-hidden rounded-xl" style={{ rotate: "-6deg" }}>
                 <Image
-                  src="/hero-image.png"
+                  src="/hero-image.jpg"
                   alt="Poster giveaway campaign VIBELY SPACE"
                   width={511}
                   height={437}

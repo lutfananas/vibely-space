@@ -308,3 +308,26 @@ Stage Summary:
 - Flow order final di versi live: klik paket (atau tombol Order di navbar) -> modal 3 langkah -> WA terbuka dengan semua data terisi -> admin verifikasi & kirim rekening
 - Catatan MultiEdit: terbukti tidak sepenuhnya atomik (edit awal teraplikasi sebelum error) — selalu verifikasi state file setelah MultiEdit gagal
 - Rollback: git checkout HEAD~1 -- src/app/page.tsx
+
+---
+Task ID: hero-poster-swap
+Agent: Main Agent (Super Z)
+Task: Ganti poster giveaway di awal halaman (DashboardMock) dengan image yang user upload (IMG_7921.PNG)
+
+Work Log:
+- User upload IMG_7921.PNG (1024x1536 PNG, 2.3MB) — poster giveaway asli VIBELY SPACE (pink, anime girl mascot, price list 6 tier, @vibely.space, WA 085694106233)
+- Backup hero-image.png lama -> backups/hero-image.v1-original.png (kalau perlu rollback)
+- Pillow: resize 1024x1536 -> 900x1350, konversi ke JPEG q85 progressive -> public/hero-image.jpg (350KB, 6.6x lebih kecil dari PNG asli)
+- Hapus public/hero-image.png (sudah ada backup)
+- Update 2 referensi kode: src/app/page.tsx line 498 (DashboardMock) + src/components/v2/hero.tsx line 119 — keduanya sekarang pakai /hero-image.jpg
+- Dev server: jangan pakai `npm run dev` (ada `tee dev.log` yang bikin next-server mati karena SIGPIPE), pakai `npx next dev -p 3000` langsung + setsid
+- Verifikasi: HTTP 200 size 349947b, img.naturalWidth=900/naturalHeight=1350 complete=true ok=true, tampil di rect.top=880
+- VLM konfirmasi: "poster image is visible inside the dashboard card. It is the pink Indonesian giveaway poster (featuring the 'VIBELY' logo and pink background), not a blank area. No broken image icons; the image is fully rendered."
+
+Stage Summary:
+- Poster baru tampil di DashboardMock (section hero, bagian "Poster Giveaway" preview)
+- File: public/hero-image.jpg (350KB JPEG) menggantikan public/hero-image.png (452KB PNG)
+- Code: 2 file diupdate (page.tsx + v2/hero.tsx), 0 baris kode tambahan
+- Rollback: cp backups/hero-image.v1-original.png public/hero-image.png + revert 2 src changes
+- Script terpersist: scripts/swap-hero-poster.py (bisa di-edit kalau ada penyesuaian)
+- Commit akan dibuat setelah ini. Deploy ke vibely-space.vercel.app belum dilakukan — nunggu instruksi user
