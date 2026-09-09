@@ -128,3 +128,25 @@ Stage Summary:
 - Live di https://vibely-space.vercel.app
 - Hero badge: "VIBELY SYSTEM START - LIVE"
 - Alur contact: header -> kartu IG/WA -> testimoni berjalan (5, loop, pause on hover) -> CTA banner
+
+---
+Task ID: vibely-2-platform-rebuild
+Agent: Main Agent (Super Z)
+Task: Implementasi PRD VIBELY SPACE 2.0 (Landing + Campaign Marketplace + Tracking + Analytics) — preview lokal saja, TIDAK deploy ke Vercel
+
+Work Log:
+- Backup v2 lama: backups/page.v2-final.tsx, globals.v2-final.css, layout.v2-final.tsx + git tag v2-final-design (commit e20f423)
+- Design system baru (globals.css): Deep Navy ink #0B1526, Vibely Blue #2E6BFF, Soft Pink #F0479C/#FF7EB9, background #F6F8FE; glass, shadow-lift, grid-bg, floatSoft ±4-8px, pulse-ring (green/red/yellow), text-gradient biru→pink
+- Font baru (layout.tsx): Space Grotesk (display) + Inter (body) sesuai PRD §23; SEO lengkap: title/desc baru, canonical, Open Graph, Twitter Card, themeColor
+- Data layer baru src/lib/data.ts: 6 paket (PKG-01..06, Rp15K-Rp185K, 200-10.000 followers), 6 campaign (VIB-2026-xxxxx active/upcoming/completed), 6 case study (before/after/growth/timeline harian), 8 FAQ, admin stats (284/17/Rp18,4M/231)
+- Komponen baru src/components/v2/: bits.tsx (useInView, CountUp id-ID, ProgressBar animasi, GrowthLine SVG Catmull-Rom + line-draw animation, Reveal, Avatar, Logo), navbar.tsx (glass sticky + mobile dropdown + MobileTabBar bottom nav dengan tombol + gradient), provider.tsx + order-modal.tsx (wizard 5 langkah: Package→Username→Review→Payment→Campaign ID VIB-2026-00xxx status WAITING + tombol Track + WA support), track-modal.tsx (lookup Campaign ID, demo chips, panel status/progress/performance/growth chart; ID tak dikenal → panel WAITING), hero.tsx (floating campaign dashboard: 4.281→6.742 +57.5%, progress 87.1%, ● Campaign Active, 1.284 New Followers count-up, poster giveaway user + kartu likes/peserta/mini growth), sections-a.tsx (TrustBar 200+/12K+/98%/24-7 count-up, WhatIs diagram Exposure→Discovery→Growth, HowItWorks 6 langkah), sections-b.tsx (LiveCampaigns 3 kartu progress live + upcoming/completed, Results 6 case study cards + dialog detail: growth chart + timeline Day1-5), platform.tsx (tab Customer App/Analytics/Admin dalam window frame browser), pricing.tsx (6 paket + toggle Followers/Reach/Campaign + PRO Most Popular gradient ring + comparison table + AccountSafety 5 kartu), closing.tsx (FAQ accordion 8, FinalCTA navy glow, Footer navy)
+- page.tsx: komposisi baru + JSON-LD Organization; sitemap.ts + robots.txt + Sitemap line
+- Refactor anti-lint: OrderModal/TrackModal pakai pola key-remount dari provider (nonce/trackId), tanpa setState dalam effect
+- Lint bersih (0 error). Verifikasi Agent Browser: render OK tanpa error console/hydration; Track modal lookup VIB-2026-00182 → 87% progress + growth chart; Order wizard end-to-end → Campaign ID VIB-2026-00216 + WAITING + handoff ke Track; Case study dialog CS-024 lengkap; Platform tabs Analytics/Admin; Pricing toggle Reach; Mobile 390px tanpa horizontal scroll (380px), tab bar + tombol + OK, footer menempel sempurna (gap 0); navbar glass saat scroll
+- TIDAK dilakukan: deploy Vercel (permintaan user — preview dulu)
+
+Stage Summary:
+- VIBELY SPACE 2.0 (PRD: positioning "Campaign Growth Platform", bukan "jual followers") jalan di preview lokal `/`
+- Struktur final sesuai PRD §29: Navbar→Hero floating dashboard→TrustBar→WhatIs→HowItWorks→LiveCampaigns→Results→PlatformPreview→Pricing+Comparison→Safety→FAQ→FinalCTA→Footer + MobileTabBar
+- Interaktif: Order Wizard (PRD §15), Track Campaign (§8), Platform Preview App/Analytics/Admin (§16-19)
+- Rollback: git checkout v2-final-design; restore point aman
