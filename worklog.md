@@ -210,3 +210,27 @@ Stage Summary:
 - Semua link WhatsApp di situs (order flow + WA_LINK support footer/kontak) kini pakai nomor asli 6285649106233
 - Pesan WA yang diterima admin: paket+code, target, durasi, @instagram, nama campaign, jadwal, total — admin verifikasi & balas dengan nomor rekening
 - Rollback: git checkout HEAD -- src/components/v2/order-modal.tsx src/components/v2/provider.tsx src/lib/data.ts
+
+---
+Task ID: restore-deployed-plus-adaptations
+Agent: Main Agent (Super Z)
+Task: User lebih suka versi lama yang terakhir terdeploy di Vercel — restore penuh, lalu adaptasi 3 elemen dari VIBELY 2.0: (1) pemilihan paket di card harga, (2) Account Safety, (3) card ✦ VIBELY Exposure/Discovery/Growth. TIDAK deploy (menunggu permintaan user).
+
+Work Log:
+- Backup V2 platform sebelum ditimpa: backups/page.v2-platform.tsx, globals.v2-platform.css, layout.v2-platform.tsx (juga aman di git commit 05898d4)
+- Restore versi terdeploy (backup v2-final = state live terakhir): page.v2-final.tsx -> src/app/page.tsx, globals.v2-final.css -> src/app/globals.css, layout.v2-final.tsx -> src/app/layout.tsx (Fredoka + Plus Jakarta Sans, tema pink cute kembali)
+- ADAPTASI 1 — pemilihan paket di card harga:
+  - Tambah WA_NUMBER='6285694106233' + waOrderLink() + waGeneralLink() di atas file
+  - PriceCard CTA: href statik wa.me -> waOrderLink({price,jaminan,keepHari,gain}) — WA terbuka dengan pesan pre-filled per paket (Paket/Jaminan/Keep hari/Estimasi gain + minta rekening); label "Order Sekarang ->" -> "Order Paket Ini ->" + caption kecil "detail paket otomatis terisi di WhatsApp ✦"
+- ADAPTASI 2 — AccountSafety: section gaya cute lama (Reveal/SectionHeader/glass tone pink-blue), badge "🛡️ Account Safety", judul "Aman & Transparan", subtitle exact user: "Campaign berjalan di sisi VIBELY — akun Anda tetap sepenuhnya milik Anda."; 5 kartu exact copy user (No Password Required/Transparent Tracking/Privacy Protected/Human Support/Clear Campaign Terms) + tile ke-6 gradient "Masih ada pertanyaan?" -> waGeneralLink (grid 3x2 rapi); posisi: setelah Cara Order, sebelum Contact
+- ADAPTASI 3 — VibelyLayers: badge "✦ VIBELY", judul "Satu Campaign, Tiga Lapis Hasil"; 3 kartu dengan chip CAMPAIGN/NEW USERS/FOLLOWERS + judul Exposure/Discovery/Growth + desc exact user, connector dashed + nomor 1-2-3 (pola Cara Order); closing line exact: "Satu campaign — tiga lapis hasil: dilihat, ditemukan, diikuti ✦" (kata diwarnai); posisi: setelah About, sebelum FastGrowthStats
+- Fix bug lama sekalian: xTicks anchor typing (TS2322 textAnchor) -> typed union 'start'|'middle'|'end'
+- Urutan section final: Navbar -> Hero -> Marquee -> GrowthChart -> KPI -> About -> VIBELY LAYERS -> FastGrowthStats -> PriceList -> Cara Order -> ACCOUNT SAFETY -> Contact(+Testimoni+CTA) -> Footer
+- Verifikasi: tsc bersih di src/, eslint 0 error, next build ✓ 5.2s; curl prod-server lokal: HTTP 200, semua marker baru ada (Account Safety/5 kartu/Tiga Lapis Hasil/6 URL WA pre-filled per paket/Halo VIBELY x7), testimoni & 10K+++ tetap utuh
+- TIDAK dilakukan: deploy Vercel (menunggu diminta user)
+
+Stage Summary:
+- src/app sekarang = versi terdeploy + 3 adaptasi, gaya visual 100% mengikuti desain cute pink lama (bukan tema navy V2)
+- 6 card harga: tombol order per-paket langsung ke WA 6285694106233 dengan pesan pre-filled (user tak perlu ketik, admin verifikasi + kirim rekening)
+- Catatan nomor WA: versi terdeploy konsisten 6285694106233 (tampil 085694106233); user kemarin menulis 6285649106233 — sudah dikonfirmasi ke user, bisa diganti 1 baris (WA_NUMBER) jika ternyata yang benar versi ketikan user
+- Rollback: cp backups/page.v2-platform.tsx -> src/app/page.tsx (+globals+layout) utk kembali ke V2 platform; atau git
