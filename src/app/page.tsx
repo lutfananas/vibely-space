@@ -588,7 +588,7 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <PriceCard
                   poster="2️⃣"
-                  price="Rp12.000"
+                  price="Rp15.000"
                   jaminan="200"
                   keepHari="Menyesuaikan"
                   gain="200-300+"
@@ -596,7 +596,7 @@ export default function Home() {
                 />
                 <PriceCard
                   poster="3️⃣"
-                  price="Rp25.000"
+                  price="Rp28.000"
                   jaminan="500"
                   keepHari="Menyesuaikan"
                   gain="500-750+"
@@ -604,7 +604,7 @@ export default function Home() {
                 />
                 <PriceCard
                   poster="4️⃣"
-                  price="Rp40.000"
+                  price="Rp42.000"
                   jaminan="1.000"
                   keepHari="1-5"
                   gain="1k-1,5k+"
@@ -612,7 +612,7 @@ export default function Home() {
                 />
                 <PriceCard
                   poster="5️⃣"
-                  price="Rp60.000"
+                  price="Rp62.000"
                   jaminan="2.000"
                   keepHari="1-6"
                   gain="2k-2,5k+"
@@ -621,7 +621,7 @@ export default function Home() {
                 />
                 <PriceCard
                   poster="6️⃣"
-                  price="Rp110.000"
+                  price="Rp115.000"
                   jaminan="5.000"
                   keepHari="3-6"
                   gain="5k-8k+"
@@ -629,7 +629,7 @@ export default function Home() {
                 />
                 <PriceCard
                   poster="7️⃣"
-                  price="Rp180.000"
+                  price="Rp185.000"
                   jaminan="10.000"
                   keepHari="5-10"
                   gain="10k-11k+"
