@@ -234,3 +234,26 @@ Stage Summary:
 - 6 card harga: tombol order per-paket langsung ke WA 6285694106233 dengan pesan pre-filled (user tak perlu ketik, admin verifikasi + kirim rekening)
 - Catatan nomor WA: versi terdeploy konsisten 6285694106233 (tampil 085694106233); user kemarin menulis 6285649106233 — sudah dikonfirmasi ke user, bisa diganti 1 baris (WA_NUMBER) jika ternyata yang benar versi ketikan user
 - Rollback: cp backups/page.v2-platform.tsx -> src/app/page.tsx (+globals+layout) utk kembali ke V2 platform; atau git
+
+---
+Task ID: music-player-fix
+Agent: Main Agent (Super Z)
+Task: (1) Fix tombol START VIBING tak terlihat habis reload. (2) Ganti lagu ke file Google Drive user, trim 00:38–01:33. TIDAK deploy Vercel.
+
+Work Log:
+- Diagnosa: MusicPlayer lama pakai YouTube IFrame API (videoId DmuSAPGV7DE, start 145s, autoplay muted). Bug tidak ter-reproduce di desktop/iPhone-emulation headless → environment-specific (mobile paint failure: blur-3xl layers + backdrop-blur + iframe YT adalah penyebab klasik di HP)
+- Fix defensif MusicPlayer (src/app/page.tsx):
+  - Buang total YouTube IFrame API (script loading, createPlayer, playerRef, mute/unmute dance) → HTML5 <audio> lokal
+  - Hapus blur-3xl dekoratif di welcome popup → radial-gradient murah (visual sama, tanpa filter berat)
+  - Hapus backdrop-blur-md overlay → bg-[#3D1A2B]/35 polos
+  - Tambah fallback backgroundColor '#E91E8C' inline di kedua tombol gradient (START VIBING + floating toggle)
+  - Logika baru: klik START VIBING → audio.play() (user gesture, volume 0.8) + popup tutup; floating toggle play/pause (🎵/▶️), isMuted state dihapus
+- Audio baru: unduh Google Drive 1zVJTXoWJ33zUAbN54k7W-DO0LGUsnuZP (AAC 4:04) → ffmpeg trim -ss 38 -t 55 → MP3 192kbps 55.04s + afade in 0.2s/out 1s → public/music/vibely-theme.mp3 (1.3MB)
+- Gotcha infra: next start (prod) memindai public/ saat boot — file yang ditambah setelah server jalan = 404; pkill -f "next start" tidak membunuh proses next-server → kill by PID port 3210, restart, mp3 200
+- Verifikasi browser (port 3210 prod build): load-1 tombol visible; klik → audio playing (paused=false, t berjalan, durasi 55.00); reload → tombol visible lagi + klik ulang jalan; seek 54.2s → loop wrap ke 2.18s siklus berikut (loop mulus); popup benar tertutup (START VIBING tidak ada di DOM); dev server :3000 juga menyajikan markup baru
+- TIDAK dilakukan: deploy Vercel (menunggu permintaan user)
+
+Stage Summary:
+- Musik background kini file lokal /music/vibely-theme.mp3 (segmen 00:38–01:33 lagu pilihan user, loop otomatis, fade halus di ujung) — tidak lagi bergantung iframe YouTube
+- Welcome popup & tombol START VIBING dibuat tahan-banting di mobile: tanpa heavy blur, tanpa script eksternal, fallback warna solid
+- Rollback: git checkout HEAD -- src/app/page.tsx; hapus public/music/

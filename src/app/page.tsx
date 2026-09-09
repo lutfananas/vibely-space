@@ -657,97 +657,34 @@ function PriceCard({
 
 /* ============================================================
    MUSIC PLAYER (welcome popup + floating toggle)
+   Local audio — no YouTube iframe, no heavy blur layers
+   (dua hal itu penyebab umum tombol gagal ter-paint di HP)
    ============================================================ */
 
 function MusicPlayer() {
   const [showWelcome, setShowWelcome] = useState(true)
-  const [isMuted, setIsMuted] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
-  const playerRef = useRef<YT.Player | null>(null)
-  const playerContainerRef = useRef<HTMLDivElement>(null)
-
-  const createPlayer = () => {
-    if (playerRef.current || !playerContainerRef.current) return
-
-    const container = document.createElement('div')
-    container.id = 'yt-player-div'
-    playerContainerRef.current.appendChild(container)
-
-    playerRef.current = new window.YT.Player('yt-player-div', {
-      videoId: 'DmuSAPGV7DE',
-      playerVars: {
-        autoplay: 1,
-        start: 145,
-        loop: 1,
-        playlist: 'DmuSAPGV7DE',
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        modestbranding: 1,
-        rel: 0,
-        playsinline: 1,
-        mute: 1,
-      },
-      events: {
-        onReady: (event: { target: YT.Player }) => {
-          event.target.mute()
-          event.target.playVideo()
-        },
-        onStateChange: (event: YT.OnStateChangeEvent) => {
-          if (event.data === window.YT.PlayerState.PLAYING) {
-            setIsPlaying(true)
-          } else if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
-            setIsPlaying(false)
-          }
-        },
-      },
-    })
-  }
-
-  useEffect(() => {
-    if (!document.getElementById('yt-iframe-api')) {
-      const tag = document.createElement('script')
-      tag.id = 'yt-iframe-api'
-      tag.src = 'https://www.youtube.com/iframe_api'
-      document.head.appendChild(tag)
-    }
-
-    const origReady = window.onYouTubeIframeAPIReady
-    window.onYouTubeIframeAPIReady = () => {
-      origReady?.()
-      createPlayer()
-    }
-
-    if (window.YT?.Player) createPlayer()
-
-    return () => {
-      if (playerRef.current) {
-        try { playerRef.current.destroy() } catch {}
-        playerRef.current = null
-      }
-    }
-  }, [])
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const handleWelcomeClick = () => {
-    if (playerRef.current) {
-      playerRef.current.unMute()
-      playerRef.current.playVideo()
+    const el = audioRef.current
+    if (el) {
+      el.volume = 0.8
+      el.play().catch(() => {})
     }
-    setIsMuted(false)
+    setIsPlaying(true)
     setShowWelcome(false)
   }
 
   const handleToggle = () => {
-    if (!playerRef.current) return
-    if (isMuted) {
-      playerRef.current.unMute()
-      playerRef.current.playVideo()
-      setIsMuted(false)
-    } else if (isPlaying) {
-      playerRef.current.pauseVideo()
-      setIsMuted(true)
+    const el = audioRef.current
+    if (!el) return
+    if (el.paused) {
+      el.play().catch(() => {})
+      setIsPlaying(true)
     } else {
-      playerRef.current.playVideo()
+      el.pause()
+      setIsPlaying(false)
     }
   }
 
@@ -755,10 +692,17 @@ function MusicPlayer() {
     <>
       {/* Welcome popup */}
       {showWelcome && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/20 backdrop-blur-md animate-fade-in px-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#3D1A2B]/35 animate-fade-in px-4">
           <div className="relative bg-white/95 rounded-[2rem] p-8 sm:p-12 shadow-cute-lg border border-pink-100 max-w-sm w-full text-center animate-pop-in overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-48 h-48 bg-pink-200/40 rounded-full blur-3xl" />
-            <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-sky-200/40 rounded-full blur-3xl" />
+            {/* Soft glow — radial gradient murah, tanpa filter blur (aman di semua HP) */}
+            <div
+              className="absolute -top-24 -right-24 w-56 h-56 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(244,114,182,0.35) 0%, rgba(244,114,182,0) 70%)' }}
+            />
+            <div
+              className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(56,189,248,0.35) 0%, rgba(56,189,248,0) 70%)' }}
+            />
 
             <span className="absolute top-5 left-6 text-lg animate-sparkle">✦</span>
             <span className="absolute top-8 right-8 text-sm animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</span>
@@ -783,6 +727,7 @@ function MusicPlayer() {
 
               <button
                 onClick={handleWelcomeClick}
+                style={{ backgroundColor: '#E91E8C' }}
                 className="gradient-animated text-white font-bold text-base px-10 py-4 rounded-full shadow-cute hover:shadow-cute-lg hover:scale-105 active:scale-95 transition-all duration-300 tracking-wide"
               >
                 START VIBING 💙
@@ -794,10 +739,13 @@ function MusicPlayer() {
         </div>
       )}
 
-      {/* Hidden YouTube container */}
-      <div
-        ref={playerContainerRef}
-        className="fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none"
+      {/* Local background music — loop 00:38–01:33 */}
+      <audio
+        ref={audioRef}
+        src="/music/vibely-theme.mp3"
+        loop
+        preload="auto"
+        className="hidden"
         aria-hidden="true"
       />
 
@@ -806,16 +754,15 @@ function MusicPlayer() {
         <button
           onClick={handleToggle}
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full gradient-animated text-white shadow-cute flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/60"
-          aria-label={isMuted ? 'Unmute music' : isPlaying ? 'Pause music' : 'Play music'}
+          style={{ backgroundColor: '#E91E8C' }}
+          aria-label={isPlaying ? 'Pause music' : 'Play music'}
         >
-          {isMuted ? (
-            <span className="text-xl">🔇</span>
-          ) : isPlaying ? (
+          {isPlaying ? (
             <span className="text-xl">🎵</span>
           ) : (
             <span className="text-xl">▶️</span>
           )}
-          {!isMuted && isPlaying && (
+          {isPlaying && (
             <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
           )}
         </button>
