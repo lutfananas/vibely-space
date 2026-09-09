@@ -536,3 +536,42 @@ Verify (agent-browser + VLM pada production):
 Stage Summary:
 - Live di https://vibely-space.vercel.app
 - Footer bawah: Liquid Glass khas iOS 27, tema biru pink konsisten dengan navbar atas
+
+---
+Task ID: readme-professional
+Agent: Main Agent (Super Z)
+Task: Buat README.md GitHub profesional & menarik — fokus teknis web, tanpa identitas WA/IG
+
+Work Log:
+1. Survey project: Next.js 16 App Router + Turbopack, React 19, TS 5,
+   Tailwind CSS 4 (@theme inline), shadcn/ui + Radix, lucide-react,
+   Fredoka + Plus Jakarta Sans via next/font, deploy Vercel.
+2. Capture 2 screenshot produksi via agent-browser (viewport 1440x900):
+   hero (dashboard mock) + order choice modal -> optimasi Pillow ke
+   docs/preview-hero.jpg (101KB) & docs/preview-order-modal.jpg (41KB).
+3. Tulis README.md (semua section centered header + badge shields.io):
+   - Header: logo-circle.png + judul + 5 badge (Live Demo, Next 16, React 19,
+     TypeScript, Tailwind 4)
+   - Preview: tabel 2 screenshot
+   - Highlights: 8 fitur teknis (Liquid Glass design system, dashboard mock,
+     SVG growth chart Catmull-Rom->Bezier, order modal 3 langkah, hybrid
+     carousel auto-play+swipe, scroll-reveal, micro-interactions, welcome gate
+     + music, SEO)
+   - Tech stack table
+   - Architecture: Mermaid flowchart (visitor -> welcome gate -> sections ->
+     choice modal -> order flow / deep-link)
+   - Design system: snippet CSS .liquid-glass + engineering note (inline
+     backdrop-filter anti-minifier) + color token table + typography
+   - Project structure tree, Getting Started, Production build
+   - Performance & UX decisions table, Vercel deploy button
+   - Footer: "where cute meets clever"
+   - TANPA nomor WhatsApp / handle Instagram (sesuai permintaan user)
+4. Verifikasi live di github.com/lutfananas/vibely-space via agent-browser:
+   heroImgLoaded=true, mermaidRendered=true (diagram render sebagai SVG).
+
+Commit: 77089c5 docs: professional README (README.md + docs/preview-*.jpg)
+Pushed ke main -> tampil di https://github.com/lutfananas/vibely-space
+
+Stage Summary:
+- README profesional live di GitHub, render sempurna (badge + gambar + mermaid)
+- Tanpa identitas kontak personal; hanya konsep teknis deep-link & stack
