@@ -45,7 +45,7 @@
 
 :root {
   --radius: 1.25rem;
-  --background: #FFF7FA;
+  --background: #FDFAFE;
   --foreground: #3D1A2B;
   --card: #FFFFFF;
   --card-foreground: #3D1A2B;
@@ -177,20 +177,28 @@
 }
 
 .gradient-animated {
-  background: linear-gradient(-45deg, #E91E8C, #F472B6, #FB7185, #E91E8C);
+  background: linear-gradient(-45deg, #E91E8C, #F472B6, #0EA5E9, #E91E8C);
   background-size: 300% 300%;
   animation: gradientShift 8s ease infinite;
 }
 
 /* Gradient TEXT — self-contained so background-clip is never overridden */
 .gradient-text {
-  background: linear-gradient(-45deg, #E91E8C, #F472B6, #FB7185, #E91E8C);
+  background: linear-gradient(-45deg, #E91E8C, #F472B6, #0EA5E9, #E91E8C);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
   animation: gradientShift 8s ease infinite;
+}
+
+/* Dashboard graph-paper grid */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(233, 30, 140, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 233, 0.045) 1px, transparent 1px);
+  background-size: 34px 34px;
 }
 
 /* Glassmorphism */
@@ -223,15 +231,15 @@
 
 /* Cute scrollbar */
 ::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #FFF0F6; }
+::-webkit-scrollbar-track { background: #F5F9FF; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #F9A8CB, #E91E8C);
+  background: linear-gradient(180deg, #F472B6, #0EA5E9);
   border-radius: 10px;
-  border: 2px solid #FFF0F6;
+  border: 2px solid #F5F9FF;
 }
 
 /* Selection color */
 ::selection {
-  background: #FBBBD0;
+  background: #BAE6FD;
   color: #6B1540;
 }

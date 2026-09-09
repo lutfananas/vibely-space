@@ -8,13 +8,13 @@ import { Card, CardContent } from '@/components/ui/card'
    DECORATIVE COMPONENTS
    ============================================================ */
 
-// Soft blurred gradient blobs — premium ambient background
+// Ambient pink + blue blobs
 function AmbientBlobs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl animate-blob" />
-      <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] bg-rose-300/25 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
-      <div className="absolute -bottom-32 left-1/4 w-96 h-96 bg-fuchsia-300/20 rounded-full blur-3xl animate-blob" style={{ animationDelay: '8s' }} />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-pink-300/25 rounded-full blur-3xl animate-blob" />
+      <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] bg-sky-300/25 rounded-full blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
+      <div className="absolute -bottom-32 left-1/4 w-96 h-96 bg-fuchsia-200/25 rounded-full blur-3xl animate-blob" style={{ animationDelay: '8s' }} />
     </div>
   )
 }
@@ -25,7 +25,7 @@ function FloatingStickers() {
     { emoji: '💖', x: '6%', y: '18%', size: 'text-2xl', delay: '0s', dur: '4s' },
     { emoji: '✨', x: '14%', y: '62%', size: 'text-xl', delay: '1s', dur: '5s' },
     { emoji: '🎀', x: '88%', y: '22%', size: 'text-3xl', delay: '0.5s', dur: '4.5s' },
-    { emoji: '🌸', x: '80%', y: '68%', size: 'text-2xl', delay: '1.5s', dur: '5.5s' },
+    { emoji: '💙', x: '80%', y: '68%', size: 'text-2xl', delay: '1.5s', dur: '5.5s' },
     { emoji: '💕', x: '70%', y: '12%', size: 'text-lg', delay: '2s', dur: '4s' },
     { emoji: '🦋', x: '24%', y: '80%', size: 'text-xl', delay: '0.8s', dur: '6s' },
   ]
@@ -44,7 +44,7 @@ function FloatingStickers() {
   )
 }
 
-// Scrolling marquee strip — trendy divider
+// Scrolling marquee strip — pink→blue gradient
 function MarqueeStrip() {
   const items = ['SPONSOR GIVEAWAY', 'MURAH', 'CEPAT', 'TERPERCAYA', 'REAL INDO', 'AKTIF']
   const row = [...items, ...items, ...items, ...items]
@@ -66,11 +66,20 @@ function MarqueeStrip() {
   )
 }
 
-// Section header — consistent premium look
-function SectionHeader({ badge, title, subtitle }: { badge: string; title: React.ReactNode; subtitle?: string }) {
+// Section header — accent alternates pink / blue
+function SectionHeader({ badge, title, subtitle, accent = 'pink' }: {
+  badge: string
+  title: React.ReactNode
+  subtitle?: string
+  accent?: 'pink' | 'blue'
+}) {
   return (
     <div className="text-center mb-12 sm:mb-16">
-      <span className="inline-flex items-center gap-2 glass text-primary text-xs sm:text-sm font-bold uppercase tracking-widest px-5 py-2 rounded-full border border-pink-200/70 shadow-sm mb-5">
+      <span className={`inline-flex items-center gap-2 glass text-xs sm:text-sm font-bold uppercase tracking-widest px-5 py-2 rounded-full border shadow-sm mb-5 ${
+        accent === 'blue'
+          ? 'text-sky-600 border-sky-200/80'
+          : 'text-primary border-pink-200/80'
+      }`}>
         {badge}
       </span>
       <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-display font-semibold text-foreground leading-tight">
@@ -121,7 +130,105 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
 }
 
 /* ============================================================
-   PRICE CARD
+   HERO DASHBOARD MOCKUP — marketing analytics card
+   ============================================================ */
+
+function DashboardMock() {
+  const bars = [30, 40, 36, 50, 46, 60, 55, 70, 66, 80, 90, 100]
+  return (
+    <div className="relative animate-float">
+      <div className="absolute -inset-6 bg-gradient-to-br from-pink-200/60 via-transparent to-sky-200/60 rounded-[2.5rem] blur-2xl opacity-60" />
+
+      <div className="relative bg-white rounded-[2rem] border border-pink-100 shadow-cute-lg overflow-hidden max-w-md mx-auto">
+        {/* Window chrome */}
+        <div className="flex items-center gap-2 px-5 py-3.5 border-b border-pink-100 bg-gradient-to-r from-pink-50/80 to-sky-50/80">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+          <div className="ml-3 flex-1 flex items-center gap-2 bg-white rounded-full px-3.5 py-1.5 border border-pink-100 min-w-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+            <span className="text-[11px] font-semibold text-muted-foreground truncate">app.vibely.space/analytics</span>
+          </div>
+        </div>
+
+        <div className="p-5 sm:p-6">
+          {/* KPI row */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3 mb-5">
+            <div className="rounded-xl border border-pink-100 bg-gradient-to-b from-white to-pink-50/50 p-2.5 sm:p-3">
+              <p className="text-[9px] font-bold tracking-wider text-muted-foreground">FOLLOWERS</p>
+              <p className="font-display text-base sm:text-xl font-bold text-foreground leading-tight">12.4K</p>
+              <span className="text-[9px] font-bold text-emerald-600">▲ +24%</span>
+            </div>
+            <div className="rounded-xl border border-sky-100 bg-gradient-to-b from-white to-sky-50/50 p-2.5 sm:p-3">
+              <p className="text-[9px] font-bold tracking-wider text-muted-foreground">ENGAGEMENT</p>
+              <p className="font-display text-base sm:text-xl font-bold text-foreground leading-tight">98%</p>
+              <span className="text-[9px] font-bold text-sky-600">REAL ✦</span>
+            </div>
+            <div className="rounded-xl border border-pink-100 bg-gradient-to-b from-white to-pink-50/50 p-2.5 sm:p-3">
+              <p className="text-[9px] font-bold tracking-wider text-muted-foreground">STATUS</p>
+              <p className="font-display text-base sm:text-xl font-bold text-foreground leading-tight flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> LIVE
+              </p>
+              <span className="text-[9px] font-bold text-emerald-600">AKTIF ✓</span>
+            </div>
+          </div>
+
+          {/* Chart */}
+          <div className="rounded-2xl border border-pink-100 p-4 mb-4 bg-gradient-to-b from-sky-50/40 to-pink-50/40">
+            <div className="flex items-center justify-between mb-3 gap-2">
+              <p className="text-xs font-bold text-foreground/80">Pertumbuhan Followers 📈</p>
+              <span className="text-[10px] font-bold text-sky-600 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-full whitespace-nowrap">12 MINGGU</span>
+            </div>
+            <div className="flex items-end gap-1.5 h-24 sm:h-28">
+              {bars.map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-t-md transition-all duration-300 hover:opacity-70"
+                  style={{
+                    height: `${h}%`,
+                    background: i === bars.length - 1
+                      ? 'linear-gradient(180deg, #E91E8C, #0EA5E9)'
+                      : i % 2 === 0 ? '#F9A8D4' : '#BAE6FD',
+                  }}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between mt-2 text-[9px] font-semibold text-muted-foreground/70">
+              <span>W1</span><span>W4</span><span>W8</span><span>W12</span>
+            </div>
+          </div>
+
+          {/* Post preview row */}
+          <div className="flex items-center gap-3 rounded-2xl border border-pink-100 p-3 bg-white">
+            <img
+              src="/hero-image.png"
+              alt="Post Giveaway"
+              className="w-12 h-12 rounded-xl object-cover border border-pink-100 flex-shrink-0"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-foreground truncate">Post Giveaway Aktif 🎉</p>
+              <p className="text-[10px] text-muted-foreground">Akunmu ditag di setiap postingan</p>
+            </div>
+            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-full flex-shrink-0">✓ ON</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating chips */}
+      <div className="hidden sm:block absolute -left-8 top-20 glass rounded-2xl border border-pink-100 shadow-cute px-3.5 py-2 animate-float" style={{ animationDelay: '0.8s' }}>
+        <p className="text-[10px] font-bold text-muted-foreground">FOLLS MASUK</p>
+        <p className="font-display text-sm font-bold text-primary">+300 💫</p>
+      </div>
+      <div className="hidden sm:block absolute -right-6 bottom-24 glass rounded-2xl border border-sky-100 shadow-cute px-3.5 py-2 animate-float" style={{ animationDelay: '1.4s' }}>
+        <p className="text-[10px] font-bold text-muted-foreground">GARANSI</p>
+        <p className="font-display text-sm font-bold text-sky-600">Aman 💙</p>
+      </div>
+    </div>
+  )
+}
+
+/* ============================================================
+   PRICE CARD — dashboard pricing style
    ============================================================ */
 
 function PriceCard({
@@ -144,11 +251,11 @@ function PriceCard({
   return (
     <Reveal delay={delay} className="h-full">
       <div className="relative h-full pt-8">
-        {/* Anime avatar — sitting on top of card */}
+        {/* Anime avatar — on top of card */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-rose-300 rounded-full blur-md opacity-50 scale-110" />
-            <div className="relative w-[4.5rem] h-[4.5rem] rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-cute">
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-300 to-sky-300 rounded-full blur-md opacity-50 scale-110" />
+            <div className="relative w-[4.5rem] h-[4.5rem] rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-sky-400 shadow-cute">
               <div className="w-full h-full rounded-full p-[2.5px] bg-white">
                 <div className="w-full h-full rounded-full overflow-hidden bg-pink-50">
                   <img
@@ -164,9 +271,9 @@ function PriceCard({
           </div>
         </div>
 
-        {/* POPULER ribbon */}
+        {/* Best badge */}
         {popular && (
-          <div className="absolute -top-3 right-4 z-30 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg shadow-orange-200/60 rotate-2 animate-wiggle">
+          <div className="absolute -top-3 right-4 z-30 gradient-animated text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-lg shadow-pink-200/60 rotate-2 animate-wiggle">
             ⭐ PALING LARIS
           </div>
         )}
@@ -174,21 +281,24 @@ function PriceCard({
         <Card
           className={`group relative h-full flex flex-col rounded-[1.75rem] border-2 overflow-visible transition-all duration-500 hover:-translate-y-2.5 cursor-pointer ${
             popular
-              ? 'border-primary/60 bg-white shadow-cute-lg ring-4 ring-primary/10'
-              : 'border-pink-100 bg-white/90 shadow-cute hover:border-primary/30 hover:shadow-cute-lg'
+              ? 'border-primary/50 bg-white shadow-cute-lg ring-4 ring-sky-100'
+              : 'border-pink-100 bg-white/90 shadow-cute hover:border-sky-200 hover:shadow-cute-lg'
           }`}
         >
-          {/* top gradient accent line */}
-          <div className={`absolute top-0 left-8 right-8 h-1 rounded-full ${popular ? 'gradient-animated' : 'bg-gradient-to-r from-pink-200 via-primary/60 to-rose-200 opacity-0 group-hover:opacity-100 transition-opacity'}`} />
+          {/* top accent line */}
+          <div className={`absolute top-0 left-8 right-8 h-1 rounded-full ${popular ? 'gradient-animated' : 'bg-gradient-to-r from-pink-200 via-sky-200 to-pink-200 opacity-0 group-hover:opacity-100 transition-opacity'}`} />
 
           <CardContent className="p-6 sm:p-7 pt-12 flex flex-col flex-1">
-            {/* Poster label */}
+            {/* Header: package chip + id */}
             <div className="text-center mb-5">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground mb-1.5">Poster</p>
-              <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl text-2xl shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 ${
-                popular ? 'gradient-animated text-white shadow-lg shadow-pink-300/40' : 'bg-secondary'
-              }`}>
-                {poster}
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground mb-1.5">Paket Poster</p>
+              <div className="flex items-center justify-center gap-2">
+                <div className={`inline-flex items-center justify-center w-13 h-13 min-w-[3.25rem] min-h-[3.25rem] rounded-2xl text-2xl shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 ${
+                  popular ? 'gradient-animated text-white shadow-lg shadow-pink-300/40' : 'bg-gradient-to-br from-pink-50 to-sky-50 border border-pink-100'
+                }`}>
+                  {poster}
+                </div>
+                <span className="text-[9px] font-bold text-muted-foreground/60 bg-muted px-2 py-1 rounded-md font-mono">PKG-0{poster.replace(/\D/g, '')}</span>
               </div>
             </div>
 
@@ -199,10 +309,10 @@ function PriceCard({
               </p>
             </div>
 
-            {/* Details */}
+            {/* Data rows */}
             <div className="space-y-2.5 text-sm flex-1">
               {[
-                { icon: '📍', bg: 'bg-emerald-50 border-emerald-100', label: 'Jaminan', value: `${jaminan} followers` },
+                { icon: '📍', bg: 'bg-sky-50 border-sky-100', label: 'Jaminan', value: `${jaminan} followers` },
                 { icon: '🌷', bg: 'bg-amber-50 border-amber-100', label: 'Keep hari', value: keepHari },
                 { icon: '🤩', bg: 'bg-pink-50 border-pink-100', label: 'Gain', value: `${gain} folls` },
               ].map((row, i) => (
@@ -224,7 +334,7 @@ function PriceCard({
               className={`mt-6 block text-center font-bold text-sm py-3 rounded-full transition-all duration-300 ${
                 popular
                   ? 'gradient-animated text-white shadow-lg shadow-pink-300/50 hover:shadow-xl hover:scale-[1.03]'
-                  : 'bg-secondary text-primary hover:bg-primary hover:text-white hover:scale-[1.03]'
+                  : 'bg-gradient-to-r from-pink-50 to-sky-50 text-primary border border-pink-200 hover:gradient-animated hover:text-white hover:border-transparent hover:scale-[1.03]'
               }`}
             >
               Order Sekarang →
@@ -338,20 +448,17 @@ function MusicPlayer() {
       {showWelcome && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/20 backdrop-blur-md animate-fade-in px-4">
           <div className="relative bg-white/95 rounded-[2rem] p-8 sm:p-12 shadow-cute-lg border border-pink-100 max-w-sm w-full text-center animate-pop-in overflow-hidden">
-            {/* ambient blob inside popup */}
             <div className="absolute -top-20 -right-20 w-48 h-48 bg-pink-200/40 rounded-full blur-3xl" />
-            <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-rose-200/40 rounded-full blur-3xl" />
+            <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-sky-200/40 rounded-full blur-3xl" />
 
-            {/* sparkles */}
             <span className="absolute top-5 left-6 text-lg animate-sparkle">✦</span>
             <span className="absolute top-8 right-8 text-sm animate-sparkle" style={{ animationDelay: '0.5s' }}>✧</span>
             <span className="absolute bottom-8 left-8 text-sm animate-sparkle" style={{ animationDelay: '1s' }}>✨</span>
             <span className="absolute bottom-6 right-6 text-base animate-sparkle" style={{ animationDelay: '0.3s' }}>✦</span>
 
             <div className="relative">
-              {/* Logo */}
               <div className="mx-auto mb-5 w-24 h-24 animate-float">
-                <div className="w-full h-full rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-rose-400 shadow-cute">
+                <div className="w-full h-full rounded-full p-[3px] bg-gradient-to-br from-primary via-pink-400 to-sky-400 shadow-cute">
                   <div className="w-full h-full rounded-full p-[2.5px] bg-white">
                     <img
                       src="/logo-circle.png"
@@ -389,9 +496,7 @@ function MusicPlayer() {
       {!showWelcome && (
         <button
           onClick={handleToggle}
-          className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full gradient-animated text-white shadow-cute flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/60 group ${
-            isMuted ? '' : ''
-          }`}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full gradient-animated text-white shadow-cute flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/60"
           aria-label={isMuted ? 'Unmute music' : isPlaying ? 'Pause music' : 'Play music'}
         >
           {isMuted ? (
@@ -411,15 +516,15 @@ function MusicPlayer() {
 }
 
 /* ============================================================
-   MAIN PAGE
+   DATA
    ============================================================ */
 
 const STATS = [
-  { value: '12K+', label: 'Total Followers', emoji: '💫' },
-  { value: '100%', label: 'Real Indonesian', emoji: '🇮🇩' },
-  { value: '200+', label: 'Sponsor Puas', emoji: '🥰' },
-  { value: '24/7', label: 'Fast Response', emoji: '⚡' },
-]
+  { value: '12K+', label: 'Total Followers', emoji: '💫', pct: 90, tone: 'pink' },
+  { value: '100%', label: 'Real Indonesian', emoji: '🇮🇩', pct: 100, tone: 'blue' },
+  { value: '200+', label: 'Sponsor Puas', emoji: '🥰', pct: 78, tone: 'pink' },
+  { value: '24/7', label: 'Fast Response', emoji: '⚡', pct: 95, tone: 'blue' },
+] as const
 
 const STEPS = [
   {
@@ -441,6 +546,10 @@ const STEPS = [
     desc: 'Akun IG kamu langsung ditag di postingan giveaway dan followers mengalir!',
   },
 ]
+
+/* ============================================================
+   MAIN PAGE
+   ============================================================ */
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
@@ -469,6 +578,9 @@ export default function Home() {
               </span>
             </a>
             <nav className="flex items-center gap-1 sm:gap-2">
+              <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full mr-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> ONLINE
+              </span>
               <a href="#about" className="hidden sm:inline-flex text-sm font-semibold text-foreground/70 hover:text-primary px-3 py-1.5 rounded-full hover:bg-secondary transition-colors">
                 Tentang
               </a>
@@ -487,18 +599,18 @@ export default function Home() {
       </div>
 
       <main className="flex-1">
-        {/* ===== HERO ===== */}
-        <section className="relative overflow-hidden pt-32 sm:pt-36 pb-20 sm:pb-28 dot-pattern">
+        {/* ===== HERO + DASHBOARD MOCK ===== */}
+        <section className="relative overflow-hidden pt-32 sm:pt-36 pb-20 sm:pb-28 grid-bg">
           <AmbientBlobs />
           <FloatingStickers />
 
           <div className="relative max-w-6xl mx-auto px-4">
-            <div className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-16 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-16 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               {/* Left: copy */}
               <div className="flex-1 text-center lg:text-left">
-                <div className="inline-flex items-center gap-2 glass border border-pink-200/70 text-primary text-xs sm:text-sm font-bold px-4 py-2 rounded-full mb-6 shadow-sm">
-                  <span className="animate-heartbeat">💖</span>
-                  <span>TRUSTED BY 200+ SPONSOR</span>
+                <div className="inline-flex items-center gap-2 glass border border-sky-200/80 text-sky-600 text-xs sm:text-sm font-bold px-4 py-2 rounded-full mb-6 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>MARKETING DASHBOARD — LIVE</span>
                 </div>
 
                 <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.6rem] font-semibold text-foreground leading-[1.12] mb-6">
@@ -527,51 +639,25 @@ export default function Home() {
                     </Button>
                   </a>
                   <a href="#about">
-                    <Button variant="outline" className="glass border-2 border-pink-200 text-primary font-bold px-8 py-6 rounded-full text-base hover:bg-secondary hover:scale-105 transition-all shadow-sm">
+                    <Button variant="outline" className="glass border-2 border-sky-200 text-sky-600 font-bold px-8 py-6 rounded-full text-base hover:bg-sky-50 hover:scale-105 transition-all shadow-sm">
                       Cara Kerjanya? 🌷
                     </Button>
                   </a>
                 </div>
 
-                {/* mini trust row */}
+                {/* trust row */}
                 <div className="mt-8 flex items-center justify-center lg:justify-start gap-4 text-xs sm:text-sm text-muted-foreground">
                   <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Real Indo</span>
                   <span className="w-1 h-1 rounded-full bg-pink-300" />
                   <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Aktif</span>
-                  <span className="w-1 h-1 rounded-full bg-pink-300" />
+                  <span className="w-1 h-1 rounded-full bg-sky-300" />
                   <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Bergaransi</span>
                 </div>
               </div>
 
-              {/* Right: image */}
-              <div className="flex-shrink-0 relative">
-                <div className="relative animate-float">
-                  <div className="absolute -inset-6 bg-gradient-to-r from-pink-200 to-rose-200 rounded-[2.5rem] blur-2xl opacity-50" />
-                  <img
-                    src="/hero-image.png"
-                    alt="Sponsor Giveaway by VIBELY SPACE"
-                    className="relative w-64 sm:w-72 lg:w-80 rounded-[2rem] shadow-cute-lg border-[6px] border-white"
-                  />
-                  {/* floating badges */}
-                  <div className="absolute -bottom-5 -right-4 glass rounded-2xl shadow-cute px-4 py-2.5 border border-pink-100 animate-float" style={{ animationDelay: '1s' }}>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">💜</span>
-                      <div>
-                        <div className="font-display font-bold text-primary text-base leading-none">12K+</div>
-                        <div className="text-[10px] text-muted-foreground font-semibold mt-0.5">FOLLOWERS</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="absolute -top-5 -left-4 glass rounded-2xl shadow-cute px-4 py-2.5 border border-pink-100 animate-float" style={{ animationDelay: '0.5s' }}>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">✨</span>
-                      <div>
-                        <div className="font-display font-bold text-primary text-base leading-none">100%</div>
-                        <div className="text-[10px] text-muted-foreground font-semibold mt-0.5">TERPERCAYA</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {/* Right: dashboard mockup */}
+              <div className="flex-shrink-0 w-full lg:w-auto">
+                <DashboardMock />
               </div>
             </div>
           </div>
@@ -580,18 +666,30 @@ export default function Home() {
         {/* ===== MARQUEE STRIP ===== */}
         <MarqueeStrip />
 
-        {/* ===== STATS ===== */}
+        {/* ===== KPI STATS ===== */}
         <section className="py-14 sm:py-16 relative">
           <div className="max-w-5xl mx-auto px-4">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {STATS.map((stat, i) => (
                 <Reveal key={i} delay={i * 80}>
                   <div className="group bg-white/90 rounded-3xl border border-pink-100 shadow-cute px-4 py-6 text-center hover:-translate-y-1.5 hover:shadow-cute-lg transition-all duration-300">
-                    <span className="text-2xl block mb-2 group-hover:scale-125 transition-transform duration-300">{stat.emoji}</span>
-                    <p className="font-display text-2xl sm:text-3xl font-bold gradient-text leading-none">
+                    <div className="flex items-center justify-center gap-1.5 mb-2">
+                      <span className="text-xl group-hover:scale-125 transition-transform duration-300">{stat.emoji}</span>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                        i % 2 === 0 ? 'bg-pink-50 text-pink-500' : 'bg-sky-50 text-sky-500'
+                      }`}>▲ TREND</span>
+                    </div>
+                    <p className="font-display text-2xl sm:text-3xl font-bold text-foreground leading-none">
                       {stat.value}
                     </p>
-                    <p className="text-xs sm:text-sm text-muted-foreground font-semibold mt-2">{stat.label}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground font-semibold mt-1.5 mb-3">{stat.label}</p>
+                    {/* mini progress bar */}
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${stat.tone === 'pink' ? 'bg-gradient-to-r from-pink-400 to-primary' : 'bg-gradient-to-r from-sky-400 to-sky-600'}`}
+                        style={{ width: `${stat.pct}%` }}
+                      />
+                    </div>
                   </div>
                 </Reveal>
               ))}
@@ -614,18 +712,17 @@ export default function Home() {
               <Reveal>
                 <div className="flex justify-center">
                   <div className="relative">
-                    <div className="absolute -inset-8 bg-gradient-to-br from-pink-200/60 to-rose-200/60 rounded-full blur-3xl opacity-60" />
+                    <div className="absolute -inset-8 bg-gradient-to-br from-pink-200/60 to-sky-200/60 rounded-full blur-3xl opacity-60" />
                     <div className="relative animate-float">
-                      <div className="w-56 h-56 sm:w-72 sm:h-72 rounded-[2.5rem] p-1.5 bg-gradient-to-br from-primary via-pink-300 to-rose-300 shadow-cute-lg">
+                      <div className="w-56 h-56 sm:w-72 sm:h-72 rounded-[2.5rem] p-1.5 bg-gradient-to-br from-primary via-pink-300 to-sky-300 shadow-cute-lg">
                         <img
                           src="/logo.png"
                           alt="VIBELY SPACE Logo"
                           className="w-full h-full rounded-[2.25rem] object-cover border-4 border-white"
                         />
                       </div>
-                      {/* floating sticker */}
                       <span className="absolute -top-4 -right-4 text-3xl animate-wiggle">🎀</span>
-                      <span className="absolute -bottom-3 -left-4 text-2xl animate-float">💖</span>
+                      <span className="absolute -bottom-3 -left-4 text-2xl animate-float">💙</span>
                     </div>
                   </div>
                 </div>
@@ -646,12 +743,16 @@ export default function Home() {
                 <Reveal delay={200}>
                   <div className="grid sm:grid-cols-2 gap-4">
                     {[
-                      { emoji: '🌷', title: 'Insight Ramai', desc: 'Followers aktif bikin engagement & insight akun kamu naik signifikan' },
-                      { emoji: '💼', title: 'Bisnis Dipercaya', desc: 'Akun bisnis jadi lebih kredibel & ada peminat karena followers real' },
+                      { emoji: '🌷', title: 'Insight Ramai', desc: 'Followers aktif bikin engagement & insight akun kamu naik signifikan', tone: 'pink' },
+                      { emoji: '💼', title: 'Bisnis Dipercaya', desc: 'Akun bisnis jadi lebih kredibel & ada peminat karena followers real', tone: 'blue' },
                     ].map((item, i) => (
-                      <div key={i} className="bg-white rounded-3xl p-5 shadow-cute border border-pink-100 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300">
-                        <span className="text-2xl">{item.emoji}</span>
-                        <p className="font-display font-semibold text-foreground mt-2 mb-1">{item.title}</p>
+                      <div key={i} className={`bg-white rounded-3xl p-5 shadow-cute border hover:-translate-y-1 transition-all duration-300 ${
+                        item.tone === 'blue' ? 'border-sky-100 hover:border-sky-300' : 'border-pink-100 hover:border-primary/40'
+                      }`}>
+                        <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-3 ${
+                          item.tone === 'blue' ? 'bg-sky-50' : 'bg-pink-50'
+                        }`}>{item.emoji}</span>
+                        <p className="font-display font-semibold text-foreground mt-1 mb-1">{item.title}</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                       </div>
                     ))}
@@ -675,11 +776,12 @@ export default function Home() {
 
         {/* ===== PRICE LIST ===== */}
         <section id="pricelist" className="py-16 sm:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pink-50/70 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-sky-50/60 to-transparent pointer-events-none" />
           <div className="relative max-w-6xl mx-auto px-4">
             <Reveal>
               <SectionHeader
                 badge="💸 Price List"
+                accent="blue"
                 title={<>Sponsor Giveaway by <span className="gradient-text">VIBELY SPACE</span> ✨</>}
                 subtitle="Pilih paket yang sesuai dengan kebutuhanmu — semua paket bergaransi!"
               />
@@ -707,18 +809,18 @@ export default function Home() {
             </Reveal>
 
             <div className="grid sm:grid-cols-3 gap-6 relative">
-              {/* connector line (desktop) */}
-              <div className="hidden sm:block absolute top-14 left-[20%] right-[20%] border-t-2 border-dashed border-pink-200" />
+              <div className="hidden sm:block absolute top-14 left-[20%] right-[20%] border-t-2 border-dashed border-sky-200" />
               {STEPS.map((step, i) => (
                 <Reveal key={i} delay={i * 120}>
                   <div className="relative bg-white rounded-[2rem] border border-pink-100 shadow-cute p-7 text-center hover:-translate-y-2 hover:shadow-cute-lg transition-all duration-300">
-                    {/* number bubble */}
                     <div className="relative mx-auto mb-4 w-16 h-16">
                       <div className="absolute inset-0 gradient-animated rounded-2xl rotate-6 opacity-20" />
                       <div className="relative w-full h-full gradient-animated rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-pink-300/40">
                         {step.emoji}
                       </div>
-                      <span className="absolute -top-2 -right-2 w-6 h-6 bg-white border-2 border-primary text-primary text-xs font-bold rounded-full flex items-center justify-center">
+                      <span className={`absolute -top-2 -right-2 w-6 h-6 bg-white border-2 text-xs font-bold rounded-full flex items-center justify-center ${
+                        i % 2 === 0 ? 'border-primary text-primary' : 'border-sky-500 text-sky-500'
+                      }`}>
                         {step.num}
                       </span>
                     </div>
@@ -737,6 +839,7 @@ export default function Home() {
             <Reveal>
               <SectionHeader
                 badge="☎️ Hubungi Kami"
+                accent="blue"
                 title={<>Minat? <span className="gradient-text">Yuk Hubungi!</span> 💕</>}
                 subtitle="Kami siap membantu kamu — fast response setiap hari!"
               />
@@ -765,19 +868,19 @@ export default function Home() {
 
               <Reveal delay={200}>
                 <a href="https://wa.me/6285694106233" target="_blank" rel="noopener noreferrer" className="group block">
-                  <Card className="rounded-[2rem] border-2 border-pink-100 hover:border-pink-300 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-cute-lg shadow-cute bg-white overflow-hidden">
+                  <Card className="rounded-[2rem] border-2 border-sky-100 hover:border-sky-300 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-cute-lg shadow-cute bg-white overflow-hidden">
                     <CardContent className="p-7 sm:p-8 flex items-center gap-5">
-                      <div className="w-16 h-16 flex-shrink-0 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                      <div className="w-16 h-16 flex-shrink-0 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                         <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                         </svg>
                       </div>
                       <div>
                         <h3 className="font-display text-lg font-semibold text-foreground">WhatsApp</h3>
-                        <p className="text-primary font-bold text-lg">085694106233</p>
+                        <p className="text-sky-600 font-bold text-lg">085694106233</p>
                         <p className="text-xs text-muted-foreground mt-1">Chat langsung 💬</p>
                       </div>
-                      <span className="ml-auto text-pink-300 group-hover:text-primary group-hover:translate-x-1 transition-all text-xl">→</span>
+                      <span className="ml-auto text-sky-300 group-hover:text-sky-500 group-hover:translate-x-1 transition-all text-xl">→</span>
                     </CardContent>
                   </Card>
                 </a>
@@ -839,7 +942,7 @@ export default function Home() {
                   href="https://instagram.com/vibely.space"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all hover:scale-110"
+                  className="w-10 h-10 rounded-full bg-pink-50 text-primary flex items-center justify-center hover:gradient-animated hover:text-white transition-all hover:scale-110"
                   aria-label="Instagram"
                 >
                   <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
@@ -850,7 +953,7 @@ export default function Home() {
                   href="https://wa.me/6285694106233"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all hover:scale-110"
+                  className="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center hover:gradient-animated hover:text-white transition-all hover:scale-110"
                   aria-label="WhatsApp"
                 >
                   <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 24 24">
