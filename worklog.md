@@ -257,3 +257,24 @@ Stage Summary:
 - Musik background kini file lokal /music/vibely-theme.mp3 (segmen 00:38–01:33 lagu pilihan user, loop otomatis, fade halus di ujung) — tidak lagi bergantung iframe YouTube
 - Welcome popup & tombol START VIBING dibuat tahan-banting di mobile: tanpa heavy blur, tanpa script eksternal, fallback warna solid
 - Rollback: git checkout HEAD -- src/app/page.tsx; hapus public/music/
+
+---
+Task ID: testimonials-carousel
+Agent: Main Agent (Super Z)
+Task: Bagian testimoni harus bisa digeser kanan/kiri manual agar cepat lihat review (sebelumnya auto-marquee 45s). TIDAK deploy sebelum diminta.
+
+Work Log:
+- Ganti TestimonialsMarquee -> TestimonialsCarousel di src/app/page.tsx (marquee strip atas TETAP auto-scroll, hanya testimoni yang diubah)
+- Carousel: overflow-x-auto + scroll-snap-x mandatory + no-scrollbar; kartu snap-start; hint text "geser ke kanan / kiri untuk lihat review ✦"
+- Drag-to-scroll mouse (pointer events + setPointerCapture; snap dinonaktifkan saat drag lalu dipulihkan); di HP native swipe
+- Tombol panah ‹ › (ChevronLeft/Right lucide, hidden di mobile, disabled state di tepi); 5 dots clickable (dot aktif w-6 bg-primary)
+- Bug fix #1: dot aktif dihitung dari kartu yang align ke left edge (bukan center viewport) + force last card saat di max scroll
+- Bug fix #2: panah dari posisi ujung tidak jalan (target melebihi maxScroll) -> scrollByCard kini hitung posisi snap eksplisit (clamp ke maxScroll) lalu scrollTo target terdekat -> langkah pas 1 kartu, deterministik
+- globals.css: tambah utility .no-scrollbar
+- Verifikasi (prod build :3210, desktop 1440 + iPhone 14 emu): drag kiri/kanan mengubah scrollLeft & dot; panah prev/next 1-kartu presisi (0->340->680->832->680->340); dot-5 klik lompat ke ujung & dot terakhir aktif; arrows hidden + dots tampil di mobile; snap x-mandatory aktif; tanpa horizontal overflow halaman (docW 394 = innerW 394); tsc & eslint bersih; build OK
+- Catatan tes: klik Playwright gagal saat welcome-popup music terbuka (overlay z-100 menghalangi) — bukan bug carousel; gunakan JS .click() atau tutup popup dulu
+- TIDAK dilakukan: deploy Vercel (menunggu diminta user)
+
+Stage Summary:
+- Testimoni sekarang carousel interaktif: swipe di HP, drag mouse di desktop, panah + dots navigasi; desain kartu & judul tidak berubah
+- Rollback: git checkout HEAD~1 -- src/app/page.tsx src/app/globals.css
