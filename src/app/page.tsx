@@ -194,7 +194,7 @@ function PriceCard({
 
             {/* Price */}
             <div className="text-center mb-6">
-              <p className={`font-display font-bold text-[2rem] leading-none ${popular ? 'gradient-animated bg-clip-text text-transparent' : 'text-primary'}`}>
+              <p className={`font-display font-bold text-[2rem] leading-none ${popular ? 'gradient-text' : 'text-primary'}`}>
                 {price}
               </p>
             </div>
@@ -504,14 +504,14 @@ export default function Home() {
                 <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.6rem] font-semibold text-foreground leading-[1.12] mb-6">
                   Jadi Sponsor{' '}
                   <span className="relative inline-block">
-                    <span className="gradient-animated bg-clip-text text-transparent">Giveaway</span>
+                    <span className="gradient-text">Giveaway</span>
                     <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 220 14" fill="none" preserveAspectRatio="none">
                       <path d="M3 10C60 3 160 3 217 10" stroke="#E91E8C" strokeWidth="4" strokeLinecap="round" opacity="0.35"/>
                     </svg>
                   </span>
                   <br />
                   <span className="text-[0.62em] sm:text-[0.65em]">Dapatkan </span>
-                  <span className="text-[0.62em] sm:text-[0.65em] gradient-animated bg-clip-text text-transparent font-bold">100+ Folls</span>
+                  <span className="text-[0.62em] sm:text-[0.65em] gradient-text font-bold">100+ Folls</span>
                   <span className="text-[0.62em] sm:text-[0.65em]"> Real Indo + Aktif 💞</span>
                 </h1>
 
@@ -588,7 +588,7 @@ export default function Home() {
                 <Reveal key={i} delay={i * 80}>
                   <div className="group bg-white/90 rounded-3xl border border-pink-100 shadow-cute px-4 py-6 text-center hover:-translate-y-1.5 hover:shadow-cute-lg transition-all duration-300">
                     <span className="text-2xl block mb-2 group-hover:scale-125 transition-transform duration-300">{stat.emoji}</span>
-                    <p className="font-display text-2xl sm:text-3xl font-bold gradient-animated bg-clip-text text-transparent leading-none">
+                    <p className="font-display text-2xl sm:text-3xl font-bold gradient-text leading-none">
                       {stat.value}
                     </p>
                     <p className="text-xs sm:text-sm text-muted-foreground font-semibold mt-2">{stat.label}</p>
@@ -605,7 +605,7 @@ export default function Home() {
             <Reveal>
               <SectionHeader
                 badge="🌷 Tentang Kami"
-                title={<>Apa Sih <span className="gradient-animated bg-clip-text text-transparent">Sponsor Giveaway</span> Itu?</>}
+                title={<>Apa Sih <span className="gradient-text">Sponsor Giveaway</span> Itu?</>}
               />
             </Reveal>
 
@@ -680,7 +680,7 @@ export default function Home() {
             <Reveal>
               <SectionHeader
                 badge="💸 Price List"
-                title={<>Sponsor Giveaway by <span className="gradient-animated bg-clip-text text-transparent">VIBELY SPACE</span> ✨</>}
+                title={<>Sponsor Giveaway by <span className="gradient-text">VIBELY SPACE</span> ✨</>}
                 subtitle="Pilih paket yang sesuai dengan kebutuhanmu — semua paket bergaransi!"
               />
             </Reveal>
@@ -702,7 +702,7 @@ export default function Home() {
             <Reveal>
               <SectionHeader
                 badge="🎈 Cara Order"
-                title={<>Order Cuma <span className="gradient-animated bg-clip-text text-transparent">3 Langkah</span>!</>}
+                title={<>Order Cuma <span className="gradient-text">3 Langkah</span>!</>}
               />
             </Reveal>
 
@@ -737,7 +737,7 @@ export default function Home() {
             <Reveal>
               <SectionHeader
                 badge="☎️ Hubungi Kami"
-                title={<>Minat? <span className="gradient-animated bg-clip-text text-transparent">Yuk Hubungi!</span> 💕</>}
+                title={<>Minat? <span className="gradient-text">Yuk Hubungi!</span> 💕</>}
                 subtitle="Kami siap membantu kamu — fast response setiap hari!"
               />
             </Reveal>

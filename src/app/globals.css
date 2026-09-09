@@ -182,6 +182,17 @@
   animation: gradientShift 8s ease infinite;
 }
 
+/* Gradient TEXT — self-contained so background-clip is never overridden */
+.gradient-text {
+  background: linear-gradient(-45deg, #E91E8C, #F472B6, #FB7185, #E91E8C);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gradientShift 8s ease infinite;
+}
+
 /* Glassmorphism */
 .glass {
   background: rgba(255, 255, 255, 0.72);
